@@ -1,0 +1,706 @@
+---
+title: "*Trichophorum planifolium* Conservation Genetics"
+output: pdf_document
+bibliography: plantarum.json
+---
+# Setup
+## Files
+The following files are necessary to compile this document. Additionally, the first time you run it you will need internet access for the script to download the country maps for USA and Canada.
+
+```
+./trich.Rmd 
+./data/survey-pops.csv
+./data/ssr_raw.csv
+./data/trich_soil.csv
+./data/trich-gbif.csv
+./data/background_points.csv
+./data/eval.opt.2020-06-24.Rda
+./data/maps/greatlakes.shp
+./data/maps/greatlakes.shx
+./data/maps/greatlakes.cpg
+./data/maps/greatlakes.prj
+./data/maps/greatlakes.dbf
+./data/maps/greatlakes.qpj
+./data/maps/envClean_ai.tif
+./data/maps/envClean_bio_02.tif
+./data/maps/envClean_bio_06.tif
+./data/maps/envClean_bio_13.tif
+./data/maps/envClean_srtm_Rugged.tif
+```
+
+## R libraries
+```{R libraries}
+library(adegenet)
+library(sp) # coordinates
+library(raster) # crs
+library(poppr) # mlg.vector
+library(spThin) # thin
+library(ENMeval)
+library(dismo)
+library(vegan)
+library(hierfstat)
+library(PopGenReport)
+library(dplyr)
+```
+
+# Introduction
+In high-latitude countries, geographically peripheral populations form a
+significant proportion of species-at-risk [@YakimowskiEckert_2007;
+@GibsonEtAl_2009]. For example, in Canada, approximately 90% of threatened
+or endangered plant species are locally rare representatives of species
+that reach the northern extent of their range in Canada, but are common
+further south [@YakimowskiEckert_2007]. Concern over the investment of
+conservation resources into species that are locally rare but globally
+common has led to debate over whether, or when, peripheral populations
+merit national concern [e.g., @HunterHutchinson_1994; @HampePetit_2005;
+@GibsonEtAl_2009].
+
+Peripheral populations are typically small and geographically isolated due
+to increased habitat variability and reduced resource availability at the
+range margin [@Brown_1984]. As a consequence, they may be at greater risk
+of extirpation due to genetic (i.e., inbreeding depression) as well as
+stochastic demographic, environmental and catastrophic factors
+[@SouleMills_1998; @BrookEtAl_2002]. These risks may be exacerbated by
+anthropogenic threats such as habitat loss and fragmentation
+[@YoungEtAl_1996]. Nevertheless, peripheral populations may be important
+sources of adaptive and evolutionary potential for the species
+[@SafrielEtAl_1994; @LeppigWhite_2006; @EckertEtAl_2008], harbouring
+unique genetic diversity and/or adaptations to conditions at the range edge
+[@LesicaAllendorf_1995; @BunnellEtAl_2004].
+
+However, not all peripheral populations are genetically differentiated from
+core populations and merit conservation concern
+[@LesicaAllendorf_1995; @LeppigWhite_2006]. For example, in a review of
+134 genetic studies in plants, @EckertEtAl_2008 found that only 70.3%
+of studies identified increased genetic differentiation towards the range
+margin. These differences may be attributable to species' specific
+characteristics [@GibsonEtAl_2009]. In plants, life-history
+characteristics (i.e., breeding system and dispersal mechanisms) are a
+major determinant of population genetic structure, because they are related
+to gene flow [@LovelessHamrick_1984; @FrankelEtAl_1995]. In this
+regard, knowledge of the level and spatial distribution of intraspecific
+genetic diversity can add valuable information to guide conservation
+efforts for peripheral populations, especially when the reproductive
+biology and ecology of the species is not well understood.
+
+@LesicaAllendorf_1995 proposed a framework for evaluating the conservation
+value of peripheral populations, identifying isolation of population and
+environmental differences as main criteria. In practice, neutral genetic
+markers, such as microsatellites, can be used to identify populations that
+have experienced restricted gene flow (i.e., are genetically isolated)
+[@CrandallEtAl_2000; @Moritz_2002]. However, microsatellite markers
+cannot provide information on adaptive divergence of populations
+[@HoldereggerEtAl_2006]. Therefore, to capture variation in selection
+pressures across the species' range, environmental differences among
+populations should be assessed [@AllendorfEtAl_2013]. A similar approach
+was recently used to identify conservation priorities in the endangered
+African tree *Prunus africana* [@VincetiEtAl_2013].
+
+In plant conservation, augmentation is a valuable tool to mitigate habitat
+loss and there is some evidence that improving population connectivity
+(i.e, gene flow) will increase survival of peripheral populations [e.g.,
+@LawsonEtAl_2012]. However, implementation of augmentation efforts needs to
+be carefully considered, as introduction of differentiated individuals can
+dilute local genetic composition and may decrease the conservation value of
+peripheral populations [@BarrettKohn_1991]. Moreover, outcrossing can be
+deleterious, leading to hybrid offspring with reduced fitness --- a phenomenon
+known as outbreeding depression [@McKayEtAl_2005; @WeeksEtAl_2011]. Some
+effort has been made to develop a means of assessing outbreeding risk for
+management efforts [e.g., @FrankhamEtAl_2011]. In particular, the extent
+and mechanism of genetic differentiation among populations must be explored
+to evaluate genetic rescue as a potential management strategy for plant
+populations [@HuffordMazer_2003; @McKayEtAl_2005; @WeeksEtAl_2011;
+@Frankham_2015].
+
+One example of a plant species that reaches the northern limit of its range
+in Canada, but is common further south is *Trichophorum planifolium*,
+commonly known as Few-flowered Club-rush or Bashful Bulrush. This is a
+perennial woodland species in the family Cyperaceae that typically occurs
+on dry, rocky slopes in association with hardwoods including Oaks
+(*Quercus* spp.) and American Beech (*Fagus grandifolia*) [citation
+needed]. The range of *T. planifolium* extends from Massachusetts west to
+Ontario and south to Virginia and Kentucky, with disjunct populations
+occurring in Missouri and southern Illinois [citation needed]. The species
+is caespitose, growing in dense, low tufts (~ 40 cm) from short rhizomes.
+It is wind-pollinated, possessing long exerted styles and stamens and
+lacking both a showy perianth and nectaries [@Crins_1989;
+@IwanyckiEtAl_2010]. However, because of the low stature of *T.
+planifolium*, and the varied terrain on which it is usually found,
+outcrossing may be limited [@Crins_1989]. Seeds mature in mid-summer and
+disperse in late July to August [@IwanyckiEtAl_2010]. A mechanism for seed
+dispersal has not been confirmed [@SmithRothfels_2007], but it has been
+suggested that the matting of leaves and stems during the fruiting period
+may limit most seed dispersal to within a few meters of the parent plants,
+leading to the formation of colonies of closely related sibling groups
+[@Crins_1989].
+
+In general, *T. planifolium* is considered common within the central
+portion of its range, but rare along the periphery [@SmithRothfels_2007].
+Southern Ontario represents the northern extent of the species range where
+there is only one known extant locality: Cootes Paradise at the Royal
+Botanical Gardens in Hamilton, Ontario. *Trichophorum planifolium* was
+previously known from one other location in Ontario, in Rouge Valley near
+Toronto, but no plants have been located at this site since 2005
+[@SmithRothfels_2007]. Due to its limited Canadian range and an apparent
+decline in population size [@COSEWIC_2000], *T. planifolium* is listed as
+endangered under the Canadian Species at Risk Act (SARA). It has previously
+been suggested that low recruitment observed at the Hamilton site may be
+due to limited intrapopulational genetic diversity [@SmithRothfels_2007].
+
+The main objective of our research was to assess genetic variability within
+the Canadian population and between the Canadian and American populations
+of *T. planifolium* to address the following questions: (1); Does the
+Canadian population of *T. planifolium* exhibit similar levels of genetic
+diversity to American populations?, (2) Is the Canadian population
+genetically distinct from American populations? and (3) Are environmental
+conditions, in terms of soils and climate, different at the northern range
+edge? To address these questions, we used nuclear microsatellite markers,
+specifically developed for *T. planifolium*, as these are hyper-variable
+and can elucidate patterns of gene flow among populations. In addition, we
+explored differences in soil and climatic characteristics across the
+species' range, assuming that natural populations from different habitats
+would show adaptive traits not captured by our microsatellite analysis.
+Implications for conservation and management initiatives for the species in
+Canada are subsequently discussed.
+
+# Methods
+
+## Occurrences and genetic sampling
+
+In spring 2014, we sampled 29 populations of *T. planifolium* across its
+geographic distribution (Table 3.1, Figure 3.1). An additional population
+sample was obtained in 2011 in Kentucky. Population sizes were estimated in
+the field and categorized as very small (<100 individuals), small
+(100-500), medium (501-1000) or large (>1000). At each site, we sampled
+individuals haphazardly, with at least 1 m between individuals, and a
+maximum distance of 100 m between the most distant samples. A total of 919
+samples were obtained, with a minimum of four and a maximum of 50 samples
+per population (mean = 31.7). Our protocol was modified for one very small
+population (PACR), where one sample was taken at a distance of 150 m to
+increase sample size to seven.
+
+Each sample consisted of 200 mg, about 8 inches, of leaf tissue from
+individual *T. planifolium* plants. After collection, samples were
+immediately placed on 40-50 mL of silica gel for drying and stored at room
+temperature prior to molecular analysis. A random subsample of 20 samples
+per population were selected for genetic analysis. For populations with
+fewer than 20 samples, all individuals were used.
+
+To complement our genetic analysis, we examined soil and climate conditions
+for populations surveyed, as microsatellite markers do not provide
+information on the adaptive differentiation of populations. Soil samples,
+composed of at least 7 sub-samples, were collected at each population, with
+sub-samples made to rooting depth (~10 cm) immediately adjacent to *T.
+planifolium* plants. No soil samples were collected at populations WVMO or
+VASC, as the substrate was too rocky to collect sufficient material. Soil
+samples were not collected at the KY population, which was sampled several
+years before the rest of the populations. Sub-samples from each location
+were pooled, and submitted to the University of Massachusetts Soil
+Laboratory (US populations) or the University of Guelph Soil Laboratory
+(the Canadian population) for analysis. pH, cation exchange capacity (CEC),
+organic matter (OM) and soil nutrients (Calcium, Magnesium, Manganese,
+Phosphorous, Potassium, Zinc) were quantified. Climate data for all 30
+populations was extracted by point from each of 19 bioclimatic variables
+(30-arc second resolution) obtained from the Worldclim dataset
+[@FickHijmans_2017, www.worldclim.org]. Soils and climate data are provided
+in Appendix B.
+
+## DNA extraction and microsatellite assays
+For each individual, 20 mg of silica dried leaf tissue was ground with 3
+mm-diameter stainless steel beads in a 2 mL Eppendorf tube at 30 Hz for 2
+min using a TissueLyser II (Qiagen, Venlo, Limburg, Netherlands). Total
+genomic DNA was extracted from ground tissue using the Nucleospin Plant II
+Kit (Machery-Nagel, Düren, Germany). The quality and concentration of DNA
+obtained was verified using a Nanodrop 2000 UV-Vis Spectrophotometer
+(ThermoScientific, Waltham, Massachusetts, U.S.A.).
+
+We developed eleven nuclear microsatellite markers [see @NowellEtAl_2015
+for details] to assess the population genetics of *T. planifolium*.
+Amplification of microsatellite fragments were performed in 8 µl reaction
+volumes containing 0.416 µL primer mix (10 mM; 10:1 untagged to tagged
+primer), 0.192 µL dye-labelled CAG Tag (10 mM; 6-FAM or VIC, Life
+Technologies, Carlsbad, California, U.S.A.), 0.24 µL DMSO, 4 µL 2X Phusion
+High-Fidelity Master Mix with HF Buffer (New England Biolabs, Ipswich,
+Massachusetts, U.S.A.), 2.152 µL ddH2O and 1 µL DNA (10 ng/µL) using a
+T-100 Thermal Cycler (Bio-Rad, Hercules, California, U.S.A.). Cycling
+conditions followed Touchdown-TD PCR [@KorbieMattick_2008] as in
+@NowellEtAl_2015. PCR products were visualized on a 1% agarose gel
+stained with GelRed (Biotium, Hayward, California, U.S.A.) and viewed with
+a High Performance Transilluminator (UVP, Upland, California, U.S.A.) with
+a 100 bp DNA ladder (New England Biolabs) to confirm the presence and size
+of amplification products and absence of contamination prior to genotyping.
+
+Amplification products were subsequently pooled into groups of four and
+visualized by capillary electrophoresis using a 3130xL Genetic Analyzer
+(Life Technologies) with the GeneScan 500 LIZ Size Standard (Life
+Technologies). Individual samples were genotyped using Genemapper v.5
+software (Life Technologies) and verified with manual scoring.
+
+## Data analysis
+Due to amplification failure, only 408 individual samples could be
+genotyped at all 11 loci (Appendix B). We retained an additional 97 samples
+that had at least 8 scored loci. These samples were used in the subsequent
+analysis of population genetic diversity and differentiation. All genetic
+analyses were performed in R version 4.0 [@RCoreTeam_2020], unless otherwise
+specified.
+
+## Genetic diversity
+We enumerated private alleles, calculated allelic richness
+[@ElMousadikPetit_1996; @AdamackGruber_2014], gene diversity, observed
+heterozygosity and the fixation index F~is~ [@Nei_1987;
+@GoudetJombart_2015] for each population. We also counted the number of
+distinct multi-locus genotypes (MLG) for each population, using the methods
+provided by @KamvarEtAl_2015. When samples with incomplete genotypes could
+not be unambiguously assigned to a single MLG, we randomly assigned them to
+a matching MLG in same population, if present (see code in appendix for
+details). To compensate for differences in sample size, we also calculated
+rarefied MLG counts for each population, generating estimates for
+subsamples of 10 individuals per population [@OksanenEtAl_2019]. Tests for
+departures from Hardy-Weinberg equilibrium (HWE) were performed with the R
+package 'adegenet' ver. 2.1.2 [@Jombart_2008].
+
+We did not test for null alleles; the strong departure from HWE, and
+extremely limited intra-population diversity indicated many populations
+were severely inbred. Available tests for null alleles, based on departures
+from HWE, cannot distinguish between the presence of null alleles, and
+homozygote excess resulting from inbreeding [@DakinAvise_2004]. We
+discuss this further below.
+
+To compare levels of genetic diversity among populations and population
+size groups (given in Table 1) we used Kruskal-Wallis tests and analysis of
+variance (ANOVA). We also evaluated differences in genetic diversity among
+Small-sized populations using a Kruskal-Wallis test to compare the genetic
+diversity of the Canadian population (ONRB) while controlling for the
+effects of population size.
+
+## Population structure
+Pairwise FST, the level of differentiation among populations [@Nei_1973],
+were calculated in 'adegenet’ and confidence intervals were constructed
+with 10,000 bootstrap replicates in 'hierfstat'. To evaluate the
+distribution of genetic variance within and among populations, we performed
+analyses of molecular variance (AMOVA) in 'poppr' based on Nei's genetic
+distance following the methods of @ExcoffierEtAl_1992. The statistical
+significance of the results was assessed with 1000 random permutations. We
+tested for isolation by distance (IBD) among populations by comparing Nei's
+genetic distances and the geographical (great-circle) distances between
+populations by application of the Mantel test with 999 permutations.
+
+Initially, we intended to use the program Structure ver. 2.3.4
+[@PritchardEtAl_2000] to explore the number of genetic clusters in our
+dataset. However, our populations did not meet the basic assumptions of the
+model (e.g., HWE and linkage equilibrium), as described below. As such, we
+elected to avoid model-based assignment protocols and instead relied on
+clustering of populations based Nei’s genetic distance. Hierarchical
+clustering was carried out using the Unweighted Pair Group Method with
+Arithmetic Mean (UPGMA), validated with the cophentic correlation. The
+Kelley-Gardner-Sutcliffe penalty function (Kelley et al., 1996) was
+calculated with the R package 'maptree’ ver. 1.4-7 (White and Gramacy,
+2012) to determine the number of clusters in the dataset.
+
+# Analysis
+## Population Data
+
+```{R loading samples}
+samples <- read.csv("data/survey-pops.csv")
+levels(samples$size)  <- c("Very small",  "Small", "Medium",  "Large")
+row.names(samples) <- samples$population
+
+soil <- read.table("data/trich_soil.csv", header = TRUE,
+                  row.names = 1) 
+
+samples[row.names(soil), colnames(soil)]  <-  soil
+
+colnames(samples)[3:4] <- c("Latitude", "Longitude")
+coordinates(samples) <- ~Longitude+Latitude
+crs(samples) <- CRS("+proj=longlat +datum=WGS84")
+
+total = data.frame(population = "total")
+```
+
+## Distribution Data
+### Records
+```{R gbif, cache = TRUE}
+gbif <- read.table("data/trich-gbif.csv")
+coordinates(gbif) <- ~X+Y
+
+gbifthin <-
+  thin(data.frame(LAT = coordinates(gbif)[, "Y"],
+                  LONG = coordinates(gbif)[, "X"],
+                  SPEC = rep("tplan", summary(gbif)$npoints)),
+       thin.par = 10, reps = 1, write.files = FALSE,
+       locs.thinned.list.return = TRUE)
+gbifthin <- gbifthin[[1]]
+
+## distance between sampled points and gbif records:
+pd <- pointDistance(samples, gbifthin, lonlat = TRUE)
+
+dupSites <- unlist(apply(pd, 1, function(x) which(x < 10000)))
+
+gbifthin <- gbifthin[-dupSites, ]
+## join GBIF and sampled pops:
+
+gbifthin$population <- NA
+gbifthin <- rbind(as.data.frame(gbifthin),
+                 as.data.frame(samples)[, c("Longitude",
+                                            "Latitude",
+                                            "population")])
+coordinates(gbifthin) <- ~Longitude+Latitude
+crs(gbifthin) <- CRS("+proj=longlat +datum=WGS84")
+```
+
+### Isolation Index
+```{R isolation}
+isolation <- function(x, nb = 5){
+  tmp  <- pointDistance(x, lonlat = TRUE)
+  tmp <- as.matrix(as.dist(tmp))
+  diag(tmp) <- NA
+  tmp  <- apply(tmp, 1, function(x) mean(sort(x)[1:nb]))
+  return(tmp)
+}
+
+gbifthin$isolation <- isolation(gbifthin, nb = 5)
+
+samples$isolation  <- gbifthin@data[row.names(samples), "isolation"]
+```
+
+### Marginality Index
+```{R marginality}
+gbifthin$marginality <- 
+  mahalanobis(coordinates(gbifthin),
+              colMeans(coordinates(gbifthin)),
+              var(coordinates(gbifthin)))
+samples$marginality <- 
+  mahalanobis(coordinates(samples),
+              colMeans(coordinates(gbifthin)),
+              var(coordinates(gbifthin)))
+```
+
+## SSR
+### Loading Data
+```{R ssr loading, echo=FALSE}
+  ssr <- read.table("./data/ssr_raw.csv", header = TRUE, sep = "\t",
+                    stringsAsFactors = FALSE)
+  ssr$X <- NULL
+  dupes <- duplicated(ssr$Sample)
+  dupesRev <- duplicated(ssr$Sample, fromLast = TRUE)
+
+  dupeNames <- ssr$Sample[dupes]
+  ## check on duplicates, combine genotypes from the same sample. 
+  for(i in dupeNames){
+    tmp <- ssr[ssr$Sample == i, ]
+    combine <- apply(tmp, 2, function(x)
+      ifelse(x[1] == "", x[2], x[1]))
+    ssr <- ssr[ssr$Sample != i, ]
+    ssr <- rbind(ssr, combine)
+  }
+
+  row.names(ssr) <- ssr$Sample
+  ssr$Sample <- NULL
+
+  trichGI <- df2genind(ssr, sep = ",")
+  pops <- substr(indNames(trichGI), start = 0, stop = 4)
+  pops[grep("KY", pops)] <- "KY"
+  pop(trichGI) <- pops
+
+  trichGI@other <- list(xy = coordinates(samples)[pops, ])
+
+  trComp <- complete.cases(tab(trichGI))
+  trComp <- trichGI[trComp]
+
+  tmp <- tab(trichGI)
+  loci <- character()
+  for(i in seq_along(alleles(trichGI))){
+    tmp <- alleles(trichGI)
+    loci[i] <- paste(names(tmp)[i], tmp[[i]][1], sep = ".")
+  }
+
+  lociTab <- tab(trichGI[, loci])
+  indLoci <- apply(lociTab, 1, function(x) sum(is.na(x)))
+  #table(indLoci)
+  #cumsum(table(indLoci))
+  ## accepting up to 3 missing loci gives us an extra 100 samples
+
+  trichGI4 <- trichGI[indLoci < 4]
+
+  samples[names(table(pop(trichGI4))), "n"]  <- table(pop(trichGI4))
+  total$n <- sum(samples$n)
+  
+  trichGP4 <- genind2genpop(trichGI4)
+
+  trichGP4@other <-list(xy =
+                          coordinates(samples)[
+                            rownames(tab(trichGP4)), ])  
+
+  ## pulls one of each unique MLG:
+  tr97 <- trComp[!duplicated(mlg.vector(trComp)), ]
+
+  GP4sum <- summary(trichGP4)
+  GI4sum <- summary(trichGI4)
+
+  lociInd <- apply(lociTab, 2, function(x) sum(is.na(x)))
+```
+
+### Summaries
+#### Sample Size
+```{R sample size}
+NComp <- as.data.frame(table(pop(trComp)))
+samples[ as.character(NComp$Var1), "NComp"]  <- NComp$Freq
+total$NComp <- sum(samples$NComp)
+```
+#### MLG
+`poppr` assigns ambgiuous mlg (due to missing loci) based on sort order,
+which is arbitrary. The code below will correct this assignment, in the
+sense that if an ambiguous genotype could match a complete MLG in its own
+population, that is what we select, in preference over assigning it a MLG
+that only occurs in a different population.
+
+```{R mlg}
+## incomplete genotypes: 
+incomp <- apply(tab(trichGI4), 1, function(x) any(is.na(x)))
+
+## discrete distance, which is 0 between matching complete mlg,
+## and between a complete mlg and an incomplete mlg with no
+## conflicting alleles:
+giD <- diss.dist(trichGI4)
+
+## mvc is a table of distances between incomplete and complete
+## mlg: 
+mvc <- as.matrix(giD)[incomp, !incomp]
+
+## mlg as determined by poppr
+mlgv <- mlg.vector(trichGI4)
+names(mlgv) <- indNames(trichGI4)
+## mlg assignments for complete genotypes, the ones we use as a
+## reference (we know they are correct, to the limit of the
+## available data)
+mlgvComp <- mlgv[!incomp]
+
+## iterate over each incomplete genotype, comparing it to the
+## genotypes in its population. If it is assigned the same mlg,
+## leave it. If it has a 0 distance from a complete mlg, assign
+## it to that. Otherwise, leave it. 
+for(i in indNames(trichGI4)[incomp]){
+  sampPop <- pop(trichGI4[i])
+  ## cat(paste(i, "\t", mlgv[i], "\t")) ## debugging
+  if(mlgv[i] %in% mlgvComp[grep(sampPop, names(mlgvComp))]) {
+    next # matches one of the complete MLG, ok!
+  }
+
+  testVec <- mvc[i, grep(sampPop, colnames(mvc)), drop = FALSE]
+
+  matchP <- which(testVec == 0)
+  if(length(matchP) > 0){ # it matches a MLG from another population
+    matchMLG <- colnames(testVec)[matchP[1]]
+    ## cat(mlgv[matchMLG], "\n") ## debugging
+    mlgv[i] <- mlgv[matchMLG] # assign it to that MLG
+  } else {
+    ## debugging
+    ## cat(mlgv[i], "\n") # it doesn't match any complete MLG
+  }
+}
+
+mlg.tab <- table(pop(trichGI4), mlgv)
+
+mlg.pop <- t(rowSums(mlg.tab > 0))
+samples[colnames(mlg.pop), "mlg"] <- t(mlg.pop)
+
+## eMLG is the expected number of MLG for a common sample size of
+## 10 individuals, determined via rarefaction
+
+emlg.pop <- rarefy(mlg.tab, sample = 10)
+
+samples[names(emlg.pop), "emlg"] <- emlg.pop
+samples[samples$n < 10, "emlg"] <- NA
+
+total$mlg <- ncol(mlg.tab)
+total$emlg <- rarefy(colSums(mlg.tab), sample = 10)
+```
+
+#### Pairwise Fst
+```{R pairwiseFst, cache = TRUE}
+trichFst <- genet.dist(trichGI4, method = "Nei87")
+fstmat <- as.matrix(trichFst)
+diag(fstmat) <- NA
+meanFst <- rowMeans(fstmat, na.rm = TRUE)
+samples[colnames(t(meanFst)), "meanFst"]  <- meanFst
+```
+
+#### Allelic Richness & Private Alleles
+```{R Allelic Richness}
+ # requires poppr
+ Ap <- rowSums(private_alleles(trichGI4, count.alleles = FALSE))
+ samples[colnames(t(Ap)), "Ap"]  <- Ap
+## Allelic richness, PopGenReport
+Ar <- allel.rich(trichGI4)$mean
+samples[colnames(t(Ar)), "Ar"]  <- Ar 
+```
+
+#### Allelic Richness
+
+```{R popgen, cache = TRUE}
+## hierfstat He, Ho: note that basic.stats automatically converts
+## genind objects to hierfstat objects.
+
+bs <- basic.stats(trichGI4)
+## Ho, mean per-locus observed heterozygosity
+Ho <- colMeans(bs$Ho)
+samples[colnames(t(Ho)), "Ho"]  <- Ho
+
+## Hs, mean per-locus gene diversity
+Hs <- t(t(colMeans(bs$Hs)))
+samples[colnames(t(Hs)), "Hs"]  <- Hs
+
+## Fis, Fis=1-Ho/Hs, 
+samples$Fis  <- 1 - samples$Ho/samples$Hs
+
+## overall values:
+total$Ho <- bs$overall["Ho"]
+total$Hs <- bs$overall["Hs"]
+total$Fis <- bs$overall["Fis"]
+total$meanFst <- bs$overall["Fst"]
+```
+
+## Mapping
+```{R mapping data, cache = TRUE}
+us <- getData("GADM", country = "USA", level = 1, path = "./data/maps/")
+canada <- getData("GADM", country = "CAN", level = 1, path = "./data/maps")
+greatlakes <- shapefile("data/maps/greatlakes.shp")
+
+canlam <- CRS("+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs")
+ca.proj <- spTransform(canada, canlam)
+us.proj <- spTransform(us, canlam)
+gl.proj <- spTransform(greatlakes, canlam)
+zm <- new("Extent", xmin = 37931.4783274939,
+         xmax = 2329337.7139123, ymin = -1612435.63417,
+         ymax = 89220.4838078856) 
+
+trich.proj <- spTransform(gbifthin, canlam)
+samples.proj <- spTransform(samples, canlam)
+```
+
+## SDM
+```{R sdm}
+## environment layers already screened via usdm::vif
+env <- stack(list.files("data/maps", ".tif",
+                       full.names = TRUE))
+names(env) <- gsub("envClean_", "", names(env))
+
+background <- read.table("data/background_points.csv")
+coordinates(background) <- ~X+Y
+load("./data/eval.opt.2020-06-24.Rda")
+
+gbifthin$suitability <- extract(eval.opt@predictions, gbifthin)
+samples$suitability <- extract(eval.opt@predictions, samples)
+```
+
+## Summary Table
+```{R summary table, results = 'asis'}
+sumTable <- as.data.frame(samples)
+sumTable <- sumTable[, c("population", "Latitude", "Longitude", "n",
+                        "NComp", "mlg", "emlg", "meanFst", "Ap", "Ar",
+                        "Ho", "Hs", "Fis")]
+sumTable["KY", "population"] <- "KYLE"
+rownames(sumTable) <- NULL
+
+tmp <- sumTable[1,]
+tmp[, names(total)] <- total
+tmp[, "population"]  <- "Total"
+sumTable <- rbind(sumTable, tmp)
+sumTable[sumTable$population == "Total",
+         !colnames(sumTable) %in% names(total)] <- NA
+
+options(knitr.kable.NA = '')
+
+sumTable %>%
+  mutate(Latitude = round(Latitude, 4),
+         Longitude = round(Longitude, 4),
+         N = paste(n, "(", NComp, ")", sep = ""),
+         emlg = round(emlg, 2),
+         Fst = round(meanFst, 2),
+         Ar = round(Ar, 2),
+         Ho = round(Ho, 2),
+         Hs = round(Hs, 2),
+         Fis = round(Fis, 2)
+         ) %>%
+  select(population, Latitude, Longitude,
+         N, Ap, Ar, mlg, emlg, Hs, Ho, Fis, Fst) %>%
+  kable()
+
+```
+
+| Code  | N Complete | N All  | Ap | Ar   | MLG   | eMLG   | Hs    | Ho    | Fis   |
+|-------|------------|--------|----|------|-------|--------|-------|-------|-------|
+| CT-TP | 16         | 17     |    | 1    | 1     | 1.00   | 0.000 | 0.000 | 1.000 |
+| KY-LE | 2          | 5      | 1  | 1.07 | 3     | 3.00   | 0.045 | 0.018 | 0.600 |
+| MA-BM | 14         | 19     | 1  | 1.12 | 5     | 3.63   | 0.067 | 0.005 | 0.925 |
+| MA-MT | 19         | 19     |    | 1.06 | 3     | 2.05   | 0.033 | 0.029 | 0.121 |
+| MA-ST | 20         | 20     |    | 1    | 1     | 1.00   | 0.000 | 0.000 | 1.000 |
+| MD-DM | 19         | 20     |    | 1.32 | 7     | 4.53   | 0.178 | 0.023 | 0.871 |
+| MO-BS | 17         | 41     | 2  | 1.31 | 17    | 6.53   | 0.160 | 0.011 | 0.931 |
+| MO-BU | 11         | 14     | 1  | 1.45 | 6     | 5.34   | 0.254 | 0.007 | 0.972 |
+| MO-HC | 12         | 14     |    | 1.11 | 4     | 3.43   | 0.064 | 0.006 | 0.906 |
+| MO-OC | 12         | 17     |    | 1.03 | 3     | 2.18   | 0.018 | 0.006 | 0.667 |
+| MO-SH | 15         | 20     |    | 1.14 | 5     | 4.21   | 0.072 | 0.011 | 0.847 |
+| NH-ER | 14         | 19     | 1  | 1.27 | 4     | 3.51   | 0.152 | 0.032 | 0.789 |
+| NJ-KP | 16         | 17     |    | 1.14 | 3     | 2.18   | 0.074 | 0.005 | 0.932 |
+| NY-MP | 19         | 19     |    | 1.02 | 2     | 1.53   | 0.010 | 0.000 | 1.000 |
+| NY-TS | 15         | 20     |    | 1.29 | 3     | 2.89   | 0.170 | 0.000 | 1.000 |
+| OH-BH | 13         | 13     |    | 1    | 1     | 1.00   | 0.000 | 0.000 | 1.000 |
+| OH-HH | 20         | 20     |    | 1.2  | 7     | 5.32   | 0.114 | 0.005 | 0.956 |
+| OH-PR | 17         | 18     | 1  | 1.04 | 3     | 2.11   | 0.020 | 0.000 | 1.000 |
+| OH-SC | 15         | 17     |    | 1    | 1     | 1.00   | 0.000 | 0.000 | 1.000 |
+| ON-RB | 22         | 27     | 1  | 1.01 | 2     | 1.37   | 0.006 | 0.000 | 1.000 |
+| PA-BE | 7          | 15     |    | 1.11 | 2     | 3.31   | 0.060 | 0.000 | 1.000 |
+| PA-CR | 5          | 6      |    | 1.06 | 2     | 2.00   | 0.036 | 0.000 | 1.000 |
+| PA-GP | 13         | 18     |    | 1.39 | 7     | 4.71   | 0.190 | 0.060 | 0.684 |
+| PA-SG | 8          | 9      |    | 1.04 | 2     | 2.00   | 0.023 | 0.000 | 1.000 |
+| VA-AC | 14         | 17     |    | 1.09 | 3     | 2.59   | 0.055 | 0.000 | 1.000 |
+| VA-HB | 14         | 18     |    | 1    | 1     | 1.00   | 0.000 | 0.000 | 1.000 |
+| VA-SC | 1          | 3      |    | 1.09 | 2     | 2.00   | 0.091 | 0.000 | 1.000 |
+| WV-FM | 18         | 19     | 2  | 1.3  | 9     | 6.08   | 0.162 | 0.005 | 0.969 |
+| WV-MO | 18         | 20     | 1  | 1.3  | 7     | 4.92   | 0.165 | 0.000 | 1.000 |
+| WV-SS | 2          | 4      |    | 1.07 | 2     | 2.00   | 0.045 | 0.000 | 1.000 |
+| Total | 408        | 505    |    |      | 115   | 9.02   | 0.076 | 0.007 | 0.908 |
+| Mean  |            | 16.833 |    |      | 3.933 | 3.0968 |       |       |       |
+
+
+# Original text
+                    1.2.3.3 Environmental characteristics
+	Hierarchical clustering was used to identify similarities in environment among populations of T. planifolium sampled for genetic analysis. Soil and climate datasets were first rescaled to have a mean of zero and a standard deviation of one. The Euclidian distance between the variables was subsequently calculated. We used the UPGMA clustering method, validated with the cophenetic correlation coefficient, and the Kelley-Gardner-Sutcliffe penalty function to derive an optimal number of clusters in the dataset.
+To determine the relationship, if any, between population genetic variation and soils, climate and spatial data, we used variation partitioning in the R package 'vegan' ver. 2-2.1 (Oksanen et al., 2015). Analysis was performed for the 26 populations for which genetic, climatic and soils data were available. We used a table of locus frequencies for each population as the dependent matrix, with three separate explanatory matrices for scaled climate data, scale soil data and geographic coordinates. To limit collinearity, we removed highly correlated variables (r > 0.8) from the climate dataset. 
+            1.3 Results
+                1.3.1 Genetic analysis
+The calculated Index of Association (Ia) and Standard Index of Association ( were 0.34 (p < 0.05) and 0.035 (p < 0.05), respectively, suggesting a high degree of linkage disequilibrium among loci. Significant departures from HWE were detected in 17 of 28 sites (61% of sites) and only one marker, TP142, showed no departures from HWE. Other markers showed significant departures from HWE in up to 12 populations (TP325). The mean estimation of frequency of null alleles for the dataset was high, ranging from 0.12 to 0.65 per marker. However, as discussed below, this result is also consistent with high levels of inbreeding, either through self-pollination or mating among closely related individuals.
+                1.3.2 Genetic diversity
+A total of 43 alleles were observed for 11 microsatellite loci In the 401 individuals analyzed, an average of 3.91 alleles per locus. The number of alleles per locus ranged from two (TP174, TP326, TP330 and TP45) to nine (TP325). 
+Eleven private alleles were detected in ten populations (for up to two loci). Allelic richness (AR) varied across populations from 1.00 to 1.47 (mean = 1.14). In total, 97 unique multi-locus genotypes were detected among the 401 individuals, with five populations each comprised of a single multi-locus genotype. Among the 97 genotypes, only four were shared between populations: two between MOOC and MOSH, one between OHBH, OHPR and PASG and one between CTTP, MD-DM and NYTS. Overall, the number of unique multi-locus genotypes per population ranged from 1.00 to 6.30 after rarefaction. Observed heterozygosity (Ho) per site varied between 0.00 and 0.06 (mean = 0.01) while expected heterozygosity (He) ranged from 0.00 to 0.24 (mean = 0.07). All populations except two, MAMT and MOHC, were significantly inbred, with estimates of Fis ranging from 0.16 to 1.00, in the 28 populations. Genetic variation in the 28 populations is summarized in Table 3.2. Contemporary effective population size (Ne) is not reported because NeEstimator failed to yield reasonable estimates due to the low variation in our dataset.
+Across all measures of genetic diversity, there were no statistically significant differences between populations (Kruskal-Wallis test: ChiSq
+2 = 27, df = 27 p > 0.05) or among population size groups (AR: F(3, 24) = 0.488, p = 0.694; MLG: F(3, 24) = 1.008, p = 0.406; He : F(3, 24) = 0.506, p = 0.682; Ho: F(3, 24) = 0.452, p = 0.717) though populations at the center of the species' range and in Missouri tended to exhibit higher diversity than populations at the range edge. Within the Small-sized populations, there were no statistically significant differences between populations in terms of basic population genetic parameters (Kruskal-Wallis test: ChiSq = 8, df = 8, p > 0.05).
+                1.3.3 Population genetic structure
+The mean genetic distance between populations was high, averaging 0.80 for pairwise FST estimates. Most comparisons (356 out of 378, 94.2%) were statistically different from zero, ranging from 0.03 to 1.00 (Table 3.4). Analysis of molecular variance (AMOVA) showed that the majority of genetic variation was among populations (59.1%, p < 0.001), indicating significant population structure, while the variation among the individuals within populations was 32.5% (p < 0.001) and the variation within individuals was 8.2% (p < 0.001). An isolation-by-distance pattern of genetic structuring was detected with the Mantel test: a significant correlation was found between genetic and geographic distances between populations (r2 = 0.29, p = 0.001).
+Among the 28 populations, five genetic clusters were identified (Figure 3.2). The cophenetic correlation was 0.69, indicating good clustering structure. In general, populations were grouped geographically. Interestingly the Canadian population was found to have a similar genetic profile to Missouri populations. Two populations, NJKP and MDDM each represent a distinct cluster.
+                1.3.4 Environmental characteristics
+	Five climatic and four soil groups were identified among the populations of T. planifolium surveyed. The cophenetic correlations were 0.84 and 0.94, respectively, indicating good agreement between the raw data and the clustering structure. Of the five climate clusters, characteristics among four groups (2, 3, 4 and 5) were similar, with some variation in mean annual temperature (6.9 - 13.8 °C). These comprised the majority of observations (93.1%) and corresponded to a significant portion of the species’ range (Figure 3.4). The remaining climate group (1), consisting of ONRB and NYMP, represents local climate conditions occurring at the northern range margin, and is characterized by high temperature seasonality (mean = 9.3 °C) and low annual precipitation (mean = 826 mm). Likewise, for soils, one cluster (2) corresponds to conditions with a broad distribution across the species' range, and includes the majority of observations (81.4%), while the other three groups are limited in their distribution (Figure 3.5). These groups are defined primarily by their acidity and corresponding nutrient composition: (1) MDDM has acidic soils (pH = 4.20) with high organic matter (OM) and high levels of phosophorous (P), (3) PAGP and MABM have alkaline soils (pH = 5.67) with a high macronutrient (Ca, Mg, K) and micronutrient (Mn) content, (4) PACR and ONRB also have alkaline soils (pH = 5.7), but have higher Calcium (Ca) levels and lower levels of macro- and micronutrients. In variation parititioning, neither soils nor climate were found to play a role in the genetic variation observed in T. planifolium (data not shown).
+            1.4 Discussion
+                1.4.1 Genetic diversity
+Microsatellite analysis revealed low levels of genetic variability in the 28 populations of T. planifolium surveyed, irrespective of size (Ho = 0.00 to 0.06). Though wind-pollinated species are expected to possess high levels of genetic variation (Loveless and Hamrick, 1984), the level of diversity detected in T. planifolium is comparable among closely related taxa with similar growth forms and reproductive strategies (e.g., Trichophorum caespitosum: Ho = 0.01 to 0.04 (Godt et al., 1996), Carex loliaceae: Ho = 0.00 to 0.12 (Kull and Oja, 2007) and Carex magellanica subsp. irrigua: Ho = 0.00 to 0.03 (Kull and Oja, 2010)).
+The low level of heterozygosity and high inbreeding (mean Fis = 0.83) detected support earlier predictions that outcrossing in this species may be limited. Crins (1989) suggested that the low stature of the plant, together with the varied terrain on which it is found, might preclude interpopulational gene flow. Under these conditions, the probability of self-pollination is expected to increase for wind-pollinated species (Loveless and Hamrick, 1984). Recombination is less effective in self-pollinating species, leading to greater homozygosity and uniformity within populations. Indeed, several of the populations surveyed (CTTP, MAST, OHBH, OHSC and VAHB) were entirely monomorphic. In a previous study, Ford et al. (1998) predicted that the likelihood of self-pollination would be greater in Carex species with hermaphroditic spikes and caepitose growth, characteristics that T. planifolium shares. However, in T. planifolium the anthers emerge beyond the scales before receptive stigmas develop (Crins, 1989), presumably as an adaptation to lessen the frequency of self-pollination.
+The low heterozygosity detected in T. planifolium may also be attributable to restricted seed dispersal. While a mechanism of seed dispersal is not known for T. planifolium, it is well documented that plant seeds often travel only one or a few metres (Cain et al., 2000). Seed dispersal in T. planifolium occurs in late July and August, during which time the plants' leaves become matted. Crins (1989) suggested that this would facilitate deposition of the seeds immediately adjacent to parent plants (i.e., seeds are gravity dispersed), resulting in small spatial clumps of closely related tussocks (Crins, 1989). Like self-pollination, mating among closely related individuals limits recombination and leads to increased homogeneity of genotypes in the population (Loveless and Hamrick, 1984). 
+Finally, null, or non-amplified, alleles can bias estimates of allele and genotype frequencies, inflating observed homozygosity. According to Brookfield's method (1996) the probability of null alleles was high (mean = 0.36) for all loci used, suggesting that the low observed heterozygosity detected in this study is due to the presence of null alleles. However, methods to estimate the frequency of null alleles (e.g., (Brookfield, 1996) assume that heterozygote deficiency is due exclusively to null alleles, though it can also arise through natural selection, lack of population mixing, or non-random mating. Given that departures from HWE were not restricted to particular loci or populations in T. planifolium, it is unlikely that heterozygote deficiency in the dataset can be attributed solely to the presence of null alleles. Instead, the ecological explanations above likely provide a better account for the low heterozygosity observed.
+                1.4.2 Patterns of genetic structure
+The majority (59.1%) of total genetic variation was found between T. planifolium populations, with 32.5% contained within populations (Table 3.4). High population genetic structure (mean FST = 0.80) was also detected. This level of differentiation among populations indicates strong divergence and suggests little gene flow occurs among populations. These results offer further support for Crins' (1989) predictions that pollen and/or seed dispersal are limited in T. planifolium. 
+Genetic divergence was positively associated with geographic distance over a range of 1800 km (Figure 3.3), conforming to the classical isolation-by-distance pattern described by Wright (1943). However, Mantel's r was relatively low (0.29), suggesting that long-distance dispersal and dispersal between non-adjacent populations might take place. Analysis of population structure revealed five genetic groups among the 28 populations of T. planifolium, separated largely according to their geographic location. Nevertheless, some populations, namely ONRB, NYTS and NHER, did not appear to cluster according to geographic provenance but clustered with Missouri populations located between 1100 and 1800 km away. Genetic similarity between these populations might reflect occasional long-distance dispersal events, as implied by the results of the Mantel test. Though pollen has been reported to travel up to 1000 km for wind-pollinated trees (Robledo-Arnuncio, 2011), this distance would presumably be much shorter for small, herbaceous species in the understory. Instead, chance long-distance dispersal by seeds could explain gene flow patterns across larger distances. Long-distance dispersal by seeds can occur when seeds adhere to or are ingested by large or migratory animals and occasionally by wind or water (Nathan et al., 2008). 
+Alternatively, the observed genetic relationships between the Missouri populations and ONRB, NYTS and NHER could be explained from a historical biogeographic perspective, considering a scenario of northward colonization following the Pleistocene glaciations. Many plant species inhabiting the Great Lakes region of North America were colonized from glacial refugia in the United States, following the retreat of the Laurentide ice sheet (Delcourt and Delcourt, 1991). In T. planifolium, ONRB, NYTS and NHER may have originated from Ozarkian refugia while other northern populations were colonized from separate refugia in the southern Appalachians. Phylogeographic evidence supports the existence of glacial refugia in both these areas and similar post-glacial migration routes have previously been proposed for other plant species (see Figure 4 and 6 in (Soltis et al., 2006).
+The genetic similarity between the populations in our study may also be due to inadequate sampling or poor resolving power of the microsatellite markers used. However, our analysis used comparable numbers of samples and microsatellite markers relative to other recent population genetic surveys in Cyperaceae (e.g., (Clarke et al., 2013; M'baya et al., 2013) and other plants (e.g., (Pandey and Rajora, 2012; Zhao et al., 2014). Nevertheless, sampling additional populations and/or using additional loci may prove valuable to clarify the genetic relationships among populations. Additional research with chloroplast DNA (cpDNA) sequences could also be useful, as these are frequently applied to determining phylogenetic relationships among plant populations (Schaal et al., 1998).
+                1.4.3 Environmental characteristics
+While neutral markers (e.g., microsatellites) usually give the same patterns of population relationships as adaptive gene markers (e.g., (Luikart et al., 2011), they are selectively neutral and cannot tell us anything about the adaptive divergence of populations (Holderegger et al., 2006). Therefore, it is not unexpected that neither soils nor climate were found to play a role in the distribution of genetic variation observed in T. planifolium. However, microsatellites can be used to elucidate patterns of gene flow among populations which, in itself, influences adaptation (Allendorf et al., 2013). 
+Together, results of our genetic analysis and our assessment of range-wide environmental characteristics provide strong evidence to suggest adaptive diversification of T. planifolium populations in response to local soil and climate characteristics. Hierarchical clustering of environmental characteristics revealed heterogeneity in soil and climate characteristics across the range of T. planifolium. Likewise, Crins (1989) previously noted variation in micro- and macronutrient content among T. planifolium populations in Canada. Variation in climate and soil conditions range-wide can lead to different selection pressures, promoting local adaptation (Lesica and Allendorf, 1995; Kawecki and Ebert, 2004). Moreover, we found that gene flow between T. planifolium populations is low, likely resulting from the limited dispersal capacity of seeds and/or pollen. This is favourable for adaptive divergence of populations, as high gene flow can oppose the effects of local selection (Lenormand, 2002). Evidence for adaptations to local soil and climate conditions have been documented in a number of plant species, including sedges. For example, preliminary investigation of the sedge Fimbristylis ovata (Burm. f.) J. Kern suggests that particular populations are locally adapted to serpentine soils (Chathuranga et al., 2015). Local adaptations can have important implications for conservation efforts and should be investigated further with classical approaches (i.e., reciprocal transplant or common garden experiments) or adaptive loci (Hufford and Mazer, 2003). 
+                1.4.4 Conclusions and implications for conservation in Canada
+Our analysis revealed low genetic diversity and high levels of inbreeding in the Canadian population of T. planifolium. However, all populations studied were found to exhibit comparable levels of diversity and inbreeding, even when population size was considered. In general, the frequency and intensity of inbreeding is expected to be greater in plants than in animal groups due to their sessile nature, limited dispersal capacity, the bisexuality of most species and their capacity to self-fertilize (Frankel et al., 1995). While inbreeding has been shown to negatively affect a number of fitness traits in plants (Angeloni et al., 2011), prior research has found that naturally self-pollinating species show less reduction in fitness with increased inbreeding than primarily outbreeding species (e.g., (Holtsford and Ellstrand, 1990; Busch, 2005). Additionally, there is some evidence to suggest inbred species may be capable of purging their genetic load to mitigate the fitness effects of inbreeding (Crnokrak and Barrett, 2002). Despite high levels of inbreeding in the Canadian population of T. planifolium, seeds are reported to form successfully at high rates (Crins, 1989). It therefore seems unlikely that the low recruitment observed at the Canadian site is attributable to inbreeding depression and, at this time, genetic rescue is not warranted. Alternatively, lack of microsite availability may be responsible for the low levels of seedling recruitment observed (Eriksson and Ehrlén, 1992). For example, Crins (1989) suggested that establishment of new T. planifolium colonies might be limited by the amount of light reaching the forest floor. Likewise, we observed that T. planifolium was generally restricted to open forests during our fieldwork. Research focused on the regeneration requirements of the species would be beneficial to clarify threats facing the Canadian population.
+	Findings of considerable divergence among the Canadian and American populations and evidence that populations are adapted to site-specific environmental conditions indicate that the Canadian population is of high conservation value (as per Lesica and Allendorf (1995)). Indeed, protection of many populations would be necessary to conserve species-level genetic diversity as it is chiefly partitioned among, rather than within, populations (see Koelling et al. (2011) or Baskauf et al. (2014), for example). These results also suggest that risks of outbreeding depression are high with outcrossing, and future restorative efforts (i.e., augmentation) for the Canadian population should be avoided or approached with caution (Frankham et al., 2011). It should also be considered that mixing of populations with differing genetic backgrounds could decrease the conservation value of the Canadian population (Barrett and Kohn, 1991). 
+As an alternative, we recommend that an ex situ seed bank be developed for future restoration or reintroduction purposes. Seeds should be obtained from all ecological settings within the Hamilton site to capture maximum genetic variation in the collection (Knapp and Rice, 1994). Should genetic diversity decline in the Canadian population, locally sourced seeds could be used to maintain variation without sacrificing local adaptiveness (Knapp and Rice, 1994). Development of a seed bank was previously proposed for T. planifolium in the Recovery Strategy for Few-flowered Club-rush/Bashful Bulrush (*Trichophorum planifolium*) in Canada (Smith and Rothfels, 2007) and has proven useful for the restoration of other plant species (e.g., Eelgrass (Zostera marina) (Leschen et al., 2010)).
+
+
+
+# References
+
