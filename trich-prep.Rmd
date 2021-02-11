@@ -1,0 +1,482 @@
+# Setup
+## Files
+The following files are necessary to compile this document. Additionally,
+the first time you run it you will need internet access for the script to
+download the country maps for USA and Canada.
+
+```
+./trich.Rmd 
+./trich-prep.Rmd
+./data/survey-pops.csv
+./data/ssr_raw.csv
+./data/trich_soil.csv
+./data/trich-gbif.csv
+./data/background_points.csv
+./data/eval.opt.2020-06-24.Rda
+./data/maps/greatlakes.shp
+./data/maps/greatlakes.shx
+./data/maps/greatlakes.cpg
+./data/maps/greatlakes.prj
+./data/maps/greatlakes.dbf
+./data/maps/greatlakes.qpj
+./data/maps/envClean_ai.tif
+./data/maps/envClean_bio_02.tif
+./data/maps/envClean_bio_06.tif
+./data/maps/envClean_bio_13.tif
+./data/maps/envClean_srtm_Rugged.tif
+```
+
+## R libraries
+```{R libraries}
+library(adegenet)
+library(adespatial)
+library(sp) # coordinates
+library(spdep)  # nbdists
+library(raster) # crs
+library(poppr) # mlg.vector
+library(spThin) # thin
+library(ENMeval)
+library(dismo)
+library(vegan)
+library(hierfstat)
+library(PopGenReport)
+library(dplyr)
+library(ENMTools)
+library(pegas) #hw.test
+library(scales)
+```
+# Analysis
+## Population Data
+```{R loading samples}
+samples <- read.csv("data/survey-pops.csv")
+levels(samples$size)  <- c("Very small",  "Small", "Medium",  "Large")
+row.names(samples) <- samples$population
+
+soil <- read.table("data/trich_soil.csv", header = TRUE,
+                  row.names = 1) 
+
+samples[row.names(soil), colnames(soil)]  <-  soil
+
+colnames(samples)[3:4] <- c("Latitude", "Longitude")
+coordinates(samples) <- ~Longitude+Latitude
+crs(samples) <- CRS("+proj=longlat +datum=WGS84")
+
+total = data.frame(population = "total")
+
+geogD <- pointDistance(samples)
+rownames(geogD) <- samples$population
+colnames(geogD) <- samples$population
+```
+
+## Distribution Data
+### Records
+```{R gbif, cache = TRUE}
+gbif <- read.table("data/trich-gbif.csv")
+coordinates(gbif) <- ~X+Y
+
+gbifthin <-
+  thin(data.frame(LAT = coordinates(gbif)[, "Y"],
+                  LONG = coordinates(gbif)[, "X"],
+                  SPEC = rep("tplan", summary(gbif)$npoints)),
+       thin.par = 10, reps = 1, write.files = FALSE,
+       locs.thinned.list.return = TRUE)
+gbifthin <- gbifthin[[1]]
+
+## distance between sampled points and gbif records:
+pd <- pointDistance(samples, gbifthin, lonlat = TRUE)
+
+dupSites <- unlist(apply(pd, 1, function(x) which(x < 10000)))
+
+gbifthin <- gbifthin[-dupSites, ]
+## join GBIF and sampled pops:
+
+gbifthin$population <- NA
+gbifthin <- rbind(as.data.frame(gbifthin),
+                 as.data.frame(samples)[, c("Longitude",
+                                            "Latitude",
+                                            "population")])
+coordinates(gbifthin) <- ~Longitude+Latitude
+crs(gbifthin) <- CRS("+proj=longlat +datum=WGS84")
+```
+
+### Isolation Index
+```{R isolation}
+isolation <- function(x, nb = 5){
+  tmp  <- pointDistance(x, lonlat = TRUE)
+  tmp <- as.matrix(as.dist(tmp))
+  diag(tmp) <- NA
+  tmp  <- apply(tmp, 1, function(x) mean(sort(x)[1:nb]))
+  return(tmp)
+}
+
+gbifthin$isolation <- isolation(gbifthin, nb = 5)
+
+samples$isolation  <- gbifthin@data[row.names(samples), "isolation"]
+```
+
+### Marginality Index
+```{R marginality}
+gbifthin$marginality <- 
+  mahalanobis(coordinates(gbifthin),
+              colMeans(coordinates(gbifthin)),
+              var(coordinates(gbifthin)))
+samples$marginality <- 
+  mahalanobis(coordinates(samples),
+              colMeans(coordinates(gbifthin)),
+              var(coordinates(gbifthin)))
+```
+## SSR
+### Loading Data
+```{R ssr loading, echo=FALSE}
+  ssr <- read.table("./data/ssr_raw.csv", header = TRUE, sep = "\t",
+                    stringsAsFactors = FALSE)
+  ssr$X <- NULL
+  dupes <- duplicated(ssr$Sample)
+  dupesRev <- duplicated(ssr$Sample, fromLast = TRUE)
+
+  dupeNames <- ssr$Sample[dupes]
+  ## check on duplicates, combine genotypes from the same sample. 
+  for(i in dupeNames){
+    tmp <- ssr[ssr$Sample == i, ]
+    combine <- apply(tmp, 2, function(x)
+      ifelse(x[1] == "", x[2], x[1]))
+    ssr <- ssr[ssr$Sample != i, ]
+    ssr <- rbind(ssr, combine)
+  }
+
+  row.names(ssr) <- ssr$Sample
+  ssr$Sample <- NULL
+
+  trichGI <- df2genind(ssr, sep = ",")
+  pops <- substr(indNames(trichGI), start = 0, stop = 4)
+  pops[grep("KY", pops)] <- "KY"
+  pop(trichGI) <- pops
+
+  trichGI@other <- list(xy = coordinates(samples)[pops, ])
+
+  trComp <- complete.cases(tab(trichGI))
+  trComp <- trichGI[trComp]
+
+  tmp <- tab(trichGI)
+  loci <- character()
+  for(i in seq_along(alleles(trichGI))){
+    tmp <- alleles(trichGI)
+    loci[i] <- paste(names(tmp)[i], tmp[[i]][1], sep = ".")
+  }
+
+  lociTab <- tab(trichGI[, loci])
+  indLoci <- apply(lociTab, 1, function(x) sum(is.na(x)))
+  #table(indLoci)
+  #cumsum(table(indLoci))
+  ## accepting up to 3 missing loci gives us an extra 100 samples
+
+  trichGI4 <- trichGI[indLoci < 4]
+
+  samples[names(table(pop(trichGI4))), "n"]  <- table(pop(trichGI4))
+  total$n <- sum(samples$n)
+  
+  trichGP4 <- genind2genpop(trichGI4)
+
+  trichGP4@other <-list(xy =
+                          coordinates(samples)[
+                            rownames(tab(trichGP4)), ])  
+
+  ## pulls one of each unique MLG:
+  tr97 <- trComp[!duplicated(mlg.vector(trComp)), ]
+
+  GP4sum <- summary(trichGP4)
+  GI4sum <- summary(trichGI4)
+
+  lociInd <- apply(lociTab, 2, function(x) sum(is.na(x)))
+```
+
+### Summaries
+#### Samples, alleles, pairwise Fst
+```{R ssr summaries, cache = TRUE}
+NComp <- as.data.frame(table(pop(trComp)))
+samples[ as.character(NComp$Var1), "NComp"]  <- NComp$Freq
+total$NComp <- sum(samples$NComp)
+
+# pairwise Fst
+trichFst <- genet.dist(trichGI4, method = "Nei87")
+fstmat <- as.matrix(trichFst)
+diag(fstmat) <- NA
+meanFst <- rowMeans(fstmat, na.rm = TRUE)
+samples[colnames(t(meanFst)), "meanFst"]  <- meanFst
+
+## Private Alleles
+## requires poppr
+Ap <- rowSums(private_alleles(trichGI4, count.alleles = FALSE))
+samples[colnames(t(Ap)), "Ap"]  <- Ap
+## Allelic richness, PopGenReport
+Ar <- allel.rich(trichGI4)$mean
+samples[colnames(t(Ar)), "Ar"]  <- Ar 
+```
+#### MLG
+`poppr` assigns ambgiuous mlg (due to missing loci) based on sort order,
+which is arbitrary. The code below will correct this assignment, in the
+sense that if an ambiguous genotype could match a complete MLG in its own
+population, that is what we select, in preference over assigning it a MLG
+that only occurs in a different population.
+
+```{R mlg}
+## incomplete genotypes: 
+incomp <- apply(tab(trichGI4), 1, function(x) any(is.na(x)))
+
+## discrete distance, which is 0 between matching complete mlg,
+## and between a complete mlg and an incomplete mlg with no
+## conflicting alleles:
+giD <- diss.dist(trichGI4)
+
+## mvc is a table of distances between incomplete and complete
+## mlg: 
+mvc <- as.matrix(giD)[incomp, !incomp]
+
+## mlg as determined by poppr
+mlgv <- mlg.vector(trichGI4)
+names(mlgv) <- indNames(trichGI4)
+## mlg assignments for complete genotypes, the ones we use as a
+## reference (we know they are correct, to the limit of the
+## available data)
+mlgvComp <- mlgv[!incomp]
+
+## iterate over each incomplete genotype, comparing it to the
+## genotypes in its population. If it is assigned the same mlg,
+## leave it. If it has a 0 distance from a complete mlg, assign
+## it to that. Otherwise, leave it. 
+for(i in indNames(trichGI4)[incomp]){
+  sampPop <- pop(trichGI4[i])
+  ## cat(paste(i, "\t", mlgv[i], "\t")) ## debugging
+  if(mlgv[i] %in% mlgvComp[grep(sampPop, names(mlgvComp))]) {
+    next # matches one of the complete MLG, ok!
+  }
+
+  testVec <- mvc[i, grep(sampPop, colnames(mvc)), drop = FALSE]
+
+  matchP <- which(testVec == 0)
+  if(length(matchP) > 0){ # it matches a MLG from another population
+    matchMLG <- colnames(testVec)[matchP[1]]
+    ## cat(mlgv[matchMLG], "\n") ## debugging
+    mlgv[i] <- mlgv[matchMLG] # assign it to that MLG
+  } else {
+    ## debugging
+    ## cat(mlgv[i], "\n") # it doesn't match any complete MLG
+  }
+}
+
+mlg.tab <- table(pop(trichGI4), mlgv)
+
+mlg.pop <- t(rowSums(mlg.tab > 0))
+pop.mlg <- t(colSums(mlg.tab > 0))
+samples[colnames(mlg.pop), "mlg"] <- t(mlg.pop)
+
+## eMLG is the expected number of MLG for a common sample size of
+## 10 individuals, determined via rarefaction
+
+emlg.pop <- rarefy(mlg.tab, sample = 10)
+
+samples[names(emlg.pop), "emlg"] <- emlg.pop
+samples[samples$n < 10, "emlg"] <- NA
+
+total$mlg <- ncol(mlg.tab)
+total$emlg <- rarefy(colSums(mlg.tab), sample = 10)
+```
+
+#### Hierfstat: Ho, Hs, Fis, Fst
+
+```{R popgen, cache = TRUE}
+## hierfstat He, Ho: note that basic.stats automatically converts
+## genind objects to hierfstat objects.
+
+bs <- basic.stats(trichGI4)
+## Ho, mean per-locus observed heterozygosity
+Ho <- colMeans(bs$Ho)
+samples[colnames(t(Ho)), "Ho"]  <- Ho
+
+## Hs, mean per-locus gene diversity
+Hs <- t(t(colMeans(bs$Hs)))
+samples[colnames(t(Hs)), "Hs"]  <- Hs
+
+## Fis, Fis=1-Ho/Hs, 
+samples$Fis  <- 1 - samples$Ho/samples$Hs
+
+## overall values:
+total$Ho <- bs$overall["Ho"]
+total$Hs <- bs$overall["Hs"]
+total$Fis <- bs$overall["Fis"]
+total$meanFst <- bs$overall["Fst"]
+```
+
+#### Hardy-Weinburg Equilibrium
+```{R HWE}
+trichGI4.hwt <- hw.test(trichGI4)
+trichGI4.hwt
+```
+## Mapping
+```{R mapping data, cache = TRUE}
+us <- getData("GADM", country = "USA", level = 1, path = "./data/maps/")
+canada <- getData("GADM", country = "CAN", level = 1, path = "./data/maps")
+greatlakes <- shapefile("data/maps/greatlakes.shp")
+extent <- shapefile("data/maps/study_extent.shp")
+
+canlam <- CRS("+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs")
+ca.proj <- spTransform(canada, canlam)
+us.proj <- spTransform(us, canlam)
+gl.proj <- spTransform(greatlakes, canlam)
+extent.proj <- spTransform(extent, canlam)
+zm <- new("Extent", xmin = 40000,
+         xmax = 2200000, ymin = -1502435,
+         ymax = 20000) 
+
+trich.proj <- spTransform(gbifthin, canlam)
+samples.proj <- spTransform(samples, canlam)
+```
+
+## SDM
+```{R sdm}
+## environment layers already screened via usdm::vif
+env <- stack(list.files("data/maps", ".tif",
+                       full.names = TRUE))
+names(env) <- gsub("envClean_", "", names(env))
+
+background <- read.table("data/background_points.csv")
+coordinates(background) <- ~X+Y
+load("./data/eval.opt.2020-06-24.Rda")
+
+gbifthin$suitability <- extract(eval.opt@predictions, gbifthin)
+samples$suitability <- extract(eval.opt@predictions, samples)
+
+rasterProj <- projectExtent(eval.opt@predictions, canlam)
+res(rasterProj) <- 10000
+predTR <- projectRaster(eval.opt@predictions, rasterProj)
+predTR[predTR < quantile(getValues(predTR),
+                         probs = 0.85, na.rm = TRUE)] <- NA
+
+```
+## sPCA
+
+```{R spca} 
+nbd <- dnearneigh(trichGP4$other$xy, d1 = 1, d2 = 650,
+                 longlat = TRUE)
+
+invdist <- lapply(nbdists(nbd, trichGP4$other$xy), function(x) 1/x)
+lw3 <- nb2listw(nbd, glist = invdist, style = "W")
+
+trich.spca1 <- spca(trichGP4, cn = lw3, scannf=FALSE,
+                   nfposi=4, nfnega=4)
+
+X <- tab(trichGP4, freq = TRUE)
+trich.pca <- ade4::dudi.pca(X, nf = 2, scannf = FALSE) 
+
+## s.value(trich.spca1$xy, trich.spca1$li[, 1], include.origin = FALSE)
+## plot(lw3, add = TRUE, coords = trich.spca1$xy)
+
+grt <- global.rtest(trich.spca1$tab, lw3, k = 1, nperm = 4999)
+
+myLoadings <- trich.spca1$c1[, 1]^2
+names(myLoadings) <- rownames(trich.spca1$c1)
+## loadingplot(myLoadings, xlab="Alleles",
+##             ylab="Weight of the alleles",
+##             main="Contribution of alleles\n to the first sPCA axis")
+
+## temp <- loadingplot(myLoadings, threshold = quantile(myLoadings, 7/8),
+##                    xlab = "Alleles", ylab = "Weight of the alleles",
+##                    main =
+##                      "Contribution of alleles\n to the first sPCA axis",
+##                    fac = trichGP4$loc.fac, cex.fac = 0.6)
+```
+
+```{R Locus TP330 map, fig.width = 7, fig.height = 5, dev = 'jpeg', fig.show = 'hold', dpi = 200, fig.caption = "*Trichophorum planifolium* Populations Sampled, color indicates frequency of allele TP330.356 in population.", eval = FALSE}
+### dev.new(height = 5, width = 7)
+par(mar = c(0.1,0.1,0.1,0.1))
+
+plot(ca.proj, xlim = c(zm@xmin, zm@xmax),
+     ylim = c(zm@ymin, zm@ymax), border = "grey",
+     bg = "lightblue", col = "white")  
+plot(us.proj, add = TRUE, border = "grey", col = "white")
+plot(gl.proj, add = TRUE, border = "grey", col = "lightblue")
+points(samples.proj, cex = 3, pch = 22, bg = grey(tab(trichGP4, freq = TRUE)[, c("TP330.356")]), col = "grey")
+box()
+```
+# Figures
+## Regressions
+
+```{R index plots, fig.width=7.25, fig.height = 3.5}
+#dev.new(width = 7.25, height = 3.5)
+par(mfrow = c(1, 3), mar = c(5, 4, 2, 1))
+lmdf <- 
+
+imlm <- lm(log(gbifthin$isolation) ~ log(gbifthin$marginality))
+islm <- lm(log(gbifthin$isolation) ~ log(gbifthin$suitability))
+smlm <- lm(log(gbifthin$suitability) ~ log(gbifthin$marginality))
+
+plot(log(gbifthin$isolation) ~ log(gbifthin$marginality),
+     xlab = "Peripherality", ylab = "Isolation",
+     pch = 16, col = alpha(1, 0.3), cex = 1.5)
+abline(imlm)
+
+plot(log(gbifthin$isolation) ~ log(gbifthin$suitability),
+     xlab = "Suitability", ylab = "Isolation",
+     pch = 16, col = alpha(1, 0.3), cex = 1.5)
+abline(islm)
+
+plot(log(gbifthin$suitability) ~ log(gbifthin$marginality),
+     xlab = "Marginality", ylab = "Suitability",
+     pch = 16, col = alpha(1, 0.3), cex = 1.5)
+abline(smlm)
+```
+
+```{R regression plots, eval = FALSE}
+samples@data %>% ggplot() +
+  aes(x = log(isolation), y = emlg) +
+  geom_point(size = 3) + geom_smooth(method = "lm") +
+  ggtitle("eMLG ~ Isolation")
+
+summary(lm(emlg ~ log(isolation), data = samples@data))
+
+samples@data %>% ggplot() +
+  aes(x = log(marginality), y = emlg) +
+  geom_point(size = 3) + geom_smooth(method = "lm") +
+  ggtitle("eMLG ~ Marginality")
+
+summary(lm(emlg ~ log(marginality), data = samples@data))
+
+samples@data %>% ggplot() +
+  aes(x = log(suitability), y = emlg) +
+  geom_point(size = 3) + geom_smooth(method = "lm") +
+  ggtitle("eMLG ~ Suitability")
+
+summary(lm(emlg ~ log(suitability), data = samples@data))
+
+samples@data %>% ggplot() +
+  aes(x = log(isolation), y = meanFst) +
+  geom_point(size = 3) + geom_smooth(method = "lm") +
+  ggtitle("meanFst ~ Isolation")
+
+summary(lm(meanFst ~ log(isolation), data = samples@data))
+
+samples@data %>% ggplot() +
+  aes(x = log(marginality), y = meanFst) +
+  geom_point(size = 3) + geom_smooth(method = "lm") +
+  ggtitle("meanFst ~ Marginality")
+
+summary(lm(meanFst ~ log(marginality), data = samples@data))
+
+samples@data %>% ggplot() +
+  aes(x = log(suitability), y = meanFst) +
+  geom_point(size = 3) + geom_smooth(method = "lm") +
+  ggtitle("meanFst ~ Suitability")
+
+summary(lm(meanFst ~ log(suitability), data = samples@data))
+
+gbifthin@data %>% ggplot() +
+  aes(x = log(suitability), y = log(marginality)) +
+  geom_point(size = 3) + geom_smooth(method = "lm") +
+  ggtitle("Marginality ~ Suitability")
+
+gbifthin@data %>% ggplot() +
+  aes(x = log(suitability), y = log(isolation)) +
+  geom_point(size = 3) + geom_smooth(method = "lm") +
+  ggtitle("Isolation ~ Suitability")
+
+```
