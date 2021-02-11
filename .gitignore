@@ -2,6 +2,9 @@
 *.pdf
 *~
 /spatial_thin_log.txt
-*.Rda
-*.tif
 *.rds
+/figure/
+/trich_files/
+/cruft/
+/cache/
+/.Rhistory
