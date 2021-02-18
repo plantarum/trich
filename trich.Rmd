@@ -7,7 +7,7 @@ output:
   bookdown::word_document2:
 bibliography: plantarum.json
 csl: american-journal-of-botany.csl
-updated: 2021-02-08
+updated: 2021-02-15
 ---
 
 # Abstract
@@ -372,11 +372,11 @@ their absolute distances [@LegendreLegendre_1998; see @Lee-YawEtAl_2018 for
 a similar approach].
 
 The suitability index was generated using a Maxent distribution model
-[@PhillipsEtAl_2017]. We limited the study extent to 31N-50N
-degrees latitude, 66W-98W degrees longitude; this area was chosen to
-include a 500 km buffer around a minimum convex polygon containing all GBIF
-records for *T. planifolium*. Background training data was limited to level
-1 Ecoregions [@OmernikGriffith_2014] in which *T. planifolium* is present
+[@PhillipsEtAl_2017]. We limited the study extent to 31N-50N degrees
+latitude, 66W-98W degrees longitude; this area was chosen to include a 500
+km buffer around a minimum convex polygon containing all GBIF records for
+*T. planifolium*. Background training data was limited to level 1
+Ecoregions [@OmernikGriffith_2014] in which *T. planifolium* is present
 within this extent. The following environmental layers were considered: 19
 bioclimatic variables [WorldClim: @FickHijmans_2017, www.worldclim.org],
 aridity [@TrabuccoZomer_2019], and terrain ruggedness. Terrain ruggedness
@@ -387,6 +387,11 @@ the 30 arc-second (~1km) resolution of the other layers, using the
 "average" resampling method. To reduce collinearity among variables, We
 selected a subset of these layers such that the variance inflation factor
 was less than 10 [function `vif` in the R package `usdm`: @NaimiEtAl_2014].
+The final set of variables included aridity, WorldClim Bio2 (mean diurnal
+temperature range), Bio6 (minimum temperature of coldest month), Bio13
+(precipitation of wettest month), and Terrain Ruggedness. Maxent model
+parameters were tuned with the ~ENMevaluate~ function from the package
+~ENMeval~ [@MuscarellaEtAl_2014].
 
 We tested the relationships between genetic diversity (eMLG) and genetic
 divergence (F~D~), and Isolation, Peripherality, and Suitability using
