@@ -1,13 +1,17 @@
 ---
-title: "Population genetics of *Trichophorum planifolium* structured by inbreeding and geography, not environment"
+title: "Population genetics of *Trichophorum planifolium* structured by inbreeding, not distribution limits"
 output:
   bookdown::pdf_document2:
     toc: false
     number_sections: false
   bookdown::word_document2:
+    toc: false
+    number_sections: false
 bibliography: plantarum.json
 csl: american-journal-of-botany.csl
-updated: 2021-02-08
+updated: 2021-02-15
+author: "Tyler W. Smith, Victoria J. Nowell, and Song Wang"
+date: 2021-02-11
 ---
 
 # Abstract
@@ -61,8 +65,6 @@ species distribution models
 # Introduction
 
 No limit, aim for 8000 words.
-
-
 
 ```{R init, echo = FALSE, results = "hide"}
 library(knitr)
@@ -169,7 +171,7 @@ genetic diversity and divergence. Specifically, we address the questions:
 does genetic diversity decline along spatial or environmental gradients
 [@EckertEtAl_2008]; or does gene flow from the core of a species'
 distribution maintain comparative levels of genetic diversity across the
-range of the species [@KirkpatrickBarton_1997, @SextonEtAl_2016]? The
+range of the species [@KirkpatrickBarton_1997; @SextonEtAl_2016]? The
 results of our work provide crucial insight for ongoing conservation
 management of this endangered species.
 
@@ -253,8 +255,7 @@ sumTable %>%
          ) %>%
   select(population, Latitude, Longitude,
          N, Ap, Ar, mlg, emlg, Hs, Ho, Fis, Fst) %>%
-  kable(caption =
-          "Populations sampled. The first two letters of the Population Code indicate the US state or Canadian province. N: total samples per population (samples with all 11 loci scored). Ap: private alleles. Ar: mean allelic richness per locus. mlg: multilocus genotypes. eMLG: multilocus genotypes in rarefied samples of 10 individuals. Hs: gene diversity. Ho: observed heterozygosity.") 
+  kable(caption = "Populations sampled. The first two letters of the Population Code indicate the US state or Canadian province. N: total samples per population (samples with all 11 loci scored in parentheses). Ap: private alleles. Ar: mean allelic richness per locus. mlg: multilocus genotypes. eMLG: multilocus genotypes in rarefied samples of 10 individuals. Hs: gene diversity. Ho: observed heterozygosity.") 
 ```
 
 ## Genetic Analysis
@@ -372,11 +373,11 @@ their absolute distances [@LegendreLegendre_1998; see @Lee-YawEtAl_2018 for
 a similar approach].
 
 The suitability index was generated using a Maxent distribution model
-[@PhillipsEtAl_2017]. We limited the study extent to 31N-50N
-degrees latitude, 66W-98W degrees longitude; this area was chosen to
-include a 500 km buffer around a minimum convex polygon containing all GBIF
-records for *T. planifolium*. Background training data was limited to level
-1 Ecoregions [@OmernikGriffith_2014] in which *T. planifolium* is present
+[@PhillipsEtAl_2017]. We limited the study extent to 31N-50N degrees
+latitude, 66W-98W degrees longitude; this area was chosen to include a 500
+km buffer around a minimum convex polygon containing all GBIF records for
+*T. planifolium*. Background training data was limited to level 1
+Ecoregions [@OmernikGriffith_2014] in which *T. planifolium* is present
 within this extent. The following environmental layers were considered: 19
 bioclimatic variables [WorldClim: @FickHijmans_2017, www.worldclim.org],
 aridity [@TrabuccoZomer_2019], and terrain ruggedness. Terrain ruggedness
@@ -387,6 +388,11 @@ the 30 arc-second (~1km) resolution of the other layers, using the
 "average" resampling method. To reduce collinearity among variables, We
 selected a subset of these layers such that the variance inflation factor
 was less than 10 [function `vif` in the R package `usdm`: @NaimiEtAl_2014].
+The final set of variables included aridity, WorldClim Bio2 (mean diurnal
+temperature range), Bio6 (minimum temperature of coldest month), Bio13
+(precipitation of wettest month), and Terrain Ruggedness. Maxent model
+parameters were tuned with the ~ENMevaluate~ function from the package
+~ENMeval~ [@MuscarellaEtAl_2014].
 
 We tested the relationships between genetic diversity (eMLG) and genetic
 divergence (F~D~), and Isolation, Peripherality, and Suitability using
@@ -415,7 +421,7 @@ percentile of the distribution. The mean F~D~ was 0.79 (range 0.59--0.9,
 Figure \@ref(fig:sumplots)); F~D~ for the Ontario population was 0.87,
 corresponding to the 80th percentile of the distribution.
 
-```{R sumplots, fig.width = 7, fig.height = 3.5, dev = 'jpeg', dpi = 200, echo = FALSE, fig.show = "hold", fig.cap = "Distribution of rarified multi-locus genotypes (eMLG) and population mean pair-wise Fst values. The red line indicates the Ontario population.", }
+```{R sumplots, fig.width = 6, fig.height = 3, dev = 'jpeg', dpi = 200, echo = FALSE, fig.show = "hold", fig.cap = "Distribution of rarified multi-locus genotypes (eMLG) and population mean pair-wise Fst values (F_D). The red line indicates the population in Ontario, Canada.", }
 #dev.new(height = 3.5, width = 7)
 
 par(mfrow = c(1, 2))
@@ -448,7 +454,7 @@ from the eastern locations (Figure \@ref(fig:sPCAmap)). However, the
 Ontario population and one of the Ohio populations are genetically more
 similar to the Missouri populations than to their nearer neighbours.
 
-```{R sPCAmap, fig.width = 7, fig.height = 5, dev = 'jpeg', dpi = 200, echo = FALSE, fig.show = "hold", fig.cap = "*Trichophorum planifolium* Populations Sampled. Colour and size of points indicate the position of each population on sPCA axis 1: size indicates absolute distance from the origin, and colour indicates positive or negative values. i.e., large black squares have large negative values, large white values have large positive PCA values, and smaller squares are have lower values."}
+```{R sPCAmap, fig.width = 6, fig.height = 3.5, dev = 'jpeg', dpi = 200, echo = FALSE, fig.show = "hold", fig.cap = "*Trichophorum planifolium* sPCA. Colour and size of points indicate the position of each population on sPCA axis 1: size indicates absolute distance from the origin, and colour indicates positive or negative values. i.e., large black squares have large negative values, large white values have large positive PCA values, with smaller squares indicating lower absolute values."}
 ##dev.new(height = 5, width = 7)
 par(mar = c(0.1,0.1,0.1,0.1))
 
@@ -537,7 +543,9 @@ declines with geographic peripherality, ecological marginality, or spatial
 isolation. However, the highly structured populations (F_ST = 0.8) and
 significant east-west spatial structure suggest that this lack of pattern
 is not due to 'swamping' gene flow from the core of the distribution
-homogenizing genetic diversity in peripheral populations.
+homogenizing genetic diversity in peripheral populations. If that were the
+case, we would expect to see lower among-population variation (F_ST), and
+relatively higher within-population variation (F_IS).
 
 This contrasts with other recent studies that have found significant
 relationships between genetic diversity and spatial or environmental
@@ -571,21 +579,22 @@ adaptation to lessen the frequency of self-pollination. However,
 @FriedmanBarrett_2009 showed that the spatial and temporal separation of
 male and female flowers in woodland sedges (monecious *Carex*) are largely
 ineffective at preventing geitonogamy. They studied seven *Carex* species,
-many of which co-occur with *T. planifolium* in woodland habitats and have
-similar caespitose habit. They found only one species had an outcrossing
-rate greater than 0.1 (three species had no polymorphic allozymes, which
-may reflect a long history of inbreeding).
+many of which co-occur with *T. planifolium* in woodland habitats (pers.
+obs) and have similar caespitose habit. They found only one species had an
+outcrossing rate greater than 0.1 (three species had no polymorphic
+allozymes, which may reflect a long history of inbreeding).
 
 Lacking any obvious adaptations for long-distance seed dispersal, gene flow
-via seed dispersal is likely similarly limited. It is well documented that
-plant seeds often travel only one or a few metres [@CainEtAl_2000]. Seed
-dispersal in *T. planifolium* occurs in late July and August, during which
-time the plants' leaves become matted. Crins [-@Crins_1989] suggested that
-this would facilitate deposition of the seeds immediately adjacent to
-parent plants (i.e., seeds are gravity dispersed), resulting in small
-spatial clumps of closely related tussocks. Like self-pollination, mating
-among closely related individuals limits recombination and leads to
-increased homogeneity of genotypes in the population [@LovelessHamrick_1984].
+via seed dispersal is likely similarly limited in *T. planifolium*. It is
+well documented that plant seeds often travel only one or a few metres
+[@CainEtAl_2000]. Seed dispersal in *T. planifolium* occurs in late July
+and August, during which time the plants' leaves become matted. Crins
+[-@Crins_1989] suggested that this would facilitate deposition of the seeds
+immediately adjacent to parent plants (i.e., seeds are gravity dispersed),
+resulting in small spatial clumps of closely related tussocks. Like
+self-pollination, mating among closely related individuals limits
+recombination and leads to increased homogeneity of genotypes in the
+population [@LovelessHamrick_1984].
 
 In combination, these life history characteristics may explain the low
 population genetic diversity documented here as the outcome of founder
@@ -612,24 +621,24 @@ loliaceae*: Ho = 0.00 to 0.12 [@KullOja_2007] and *Carex magellanica*
 subsp. *irrigua*: Ho = 0.00 to 0.03 [@KullOja_2010]. 
 
 The main geographic structure in the genetic data reveals a broad division
-between the Missouri and the eastern populations (Figure
-\@ref(fig:distmap)). This suggests current *T. planifolium* populations may
-have emerged from glacial refugia both in the Appalachian Mountains and on
-the Ozark plateau [@DelcourtDelcourt_1991; @Meyer_1997; @SoltisEtAl_2006].
-However, if this is the case, it is interesting to note that populations
-representing both eastern and western genetic groups appear in close
-proximity in Ohio. The sPCA analysis also indicates the Ontario population
-is genetically more similar to the Missouri populations than the
-geographically closer eastern group.
+between Missouri and the eastern populations (Figure \@ref(fig:distmap)).
+This suggests current *T. planifolium* populations may have emerged from
+glacial refugia both in the Appalachian Mountains and on the Ozark plateau
+[@DelcourtDelcourt_1991; @Meyer_1997; @SoltisEtAl_2006]. However, if this
+is the case, it is interesting to note that populations representing both
+eastern and western genetic groups appear in close proximity in Ohio. The
+sPCA analysis also indicates the Ontario population is genetically more
+similar to the Missouri populations than the geographically closer eastern
+group.
 
 Gene flow via pollen or seed between Missouri in the west, and Ohio and
 Ontario to the east, is unlikely, given the long distances between these
 locations (> 500 km). However, the SDM indicates pockets of suitable
 environment exist along the Ohio river in southern Indiana and northern
-Kentucky (Figure \@ref(fig:distmap))). This may have served as a
+Kentucky (Figure \@ref(fig:distmap)). This may have served as a
 post-glacial colonization route linking populations from the two refugia;
 there may even be overlooked populations of *T. planifolium* in this area,
-as this species is easily overlooked.
+as this species is easily missed.
 
 While our data do not show a general relationship between spatial or
 environmental conditions and genetic diversity, the lone remaining Canadian
@@ -666,8 +675,16 @@ considered that mixing of populations with differing genetic backgrounds
 could decrease the conservation value of the Canadian population
 [@BarrettKohn_1991].
 
+# CONCLUSION
+In *T. planifolium*, population genetic diversity is primarily a reflection
+of local processes. Its reproductive biology favours inbreeding; genetic
+diversity is paritioned almost entirely among populations, with very little
+within populations. This highlights the importance of considering the
+influence of life history in shaping broader biogeographic patterns as the
+study of range limits advances.
+
 # Acknowledgements
-The authors thank The staff of Royal Botanical Gardens in Hamilton,
+The authors thank the staff of Royal Botanical Gardens in Hamilton,
 Ontario, especially Natalie Iwanycki, who provided detailed reports on *T.
 planifolium* in Canada. Kasia Dadej (Agriculture and Agri-Food Canada)
 assisted with scoring the microsatellite data. The following people
@@ -687,16 +704,17 @@ Scholarship.
 
 # AUTHOR CONTRIBUTIONS
 
-VJN designed the majority of this study as part of her MSc thesis research.
-She planned the field sampling, conducted all the field work, completed the
-lab work, and wrote the first draft of the manuscript.
+VJN and TWS conceived the study. VJN designed the field sampling, and VJN
+and TWS completed the sample collection. VJN and SW completed the lab
+experiments. VJN completed the analysis, with direction and supervision
+from TWS. VJN completed the first draft of the manuscript. TWS provided
+additional analyses and completed the final draft of the manuscript.
 
-TWS supervised VJN throughout her MSc program, contributing to the study
-design, partipated equally in field work, assisting with data analysis and
-interpretation, and revising the manuscript. He also contributed additional
-spatial analyses, and prepared the final draft of the manuscript.
+# Data Availability
 
-SW assisted VJN in designing the molecular markers used in this project,
-and participated equally in completing the lab work.
+This manuscript and all associated data is available at the GitHub
+repository, https://github.com/plantarum/trich for inspection during peer
+review. This repository will be transfered to Zenodo for permanent, public
+archiving after completion of the peer review process.
 
 # References
