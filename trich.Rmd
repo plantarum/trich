@@ -9,7 +9,7 @@ output:
     number_sections: false
 bibliography: plantarum.json
 csl: american-journal-of-botany.csl
-updated: 2021-02-18
+updated: 2021-03-05
 author: "Tyler W. Smith, Victoria J. Nowell, and Song Wang"
 date: 2021-02-11
 ---
@@ -421,7 +421,7 @@ percentile of the distribution. The mean F~D~ was 0.79 (range 0.59--0.9,
 Figure \@ref(fig:sumplots)); F~D~ for the Ontario population was 0.87,
 corresponding to the 80th percentile of the distribution.
 
-```{R sumplots, fig.width = 6, fig.height = 3, dev = 'jpeg', dpi = 200, echo = FALSE, fig.show = "hold", fig.cap = "Distribution of rarified multi-locus genotypes (eMLG) and population mean pair-wise Fst values (F_D). The red line indicates the population in Ontario, Canada.", }
+```{R sumplots, fig.width = 6, fig.height = 3, dev = 'jpeg', dpi = 200, echo = FALSE, fig.show = "hold", fig.cap = "Distribution of rarified multi-locus genotypes (eMLG) and population mean pair-wise Fst values (F_D). The red line indicates the population in Ontario, Canada."}
 #dev.new(height = 3.5, width = 7)
 
 par(mfrow = c(1, 2))
