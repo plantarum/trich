@@ -1,5 +1,4 @@
 /trich_cache/
-*.pdf
 *~
 /spatial_thin_log.txt
 *.rds
