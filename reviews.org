@@ -1,0 +1,222 @@
+#+TITLE Review for submission AJB-D-21-00055
+#+DATE 2021-04-14
+
+* Associate Editor
+We have received two reviews for this manuscript. Both reviewers are
+positive about merits of the study, yet rather disappointed by presentation
+and performed analyses. I would highlight many useful suggestions of the
+Reviewer 1 regarding the data analysis. Further, I fully agree that the
+observed pattern can be caused by clonal reproduction. The effect of
+clonality must be carefully addressed and its influence on inbreeding
+coefficient clarified. This is a major issue. Both reviewers also pointed
+out that Figures do not transmit the information clearly, and suggested
+possible solution. I agree that the data have potential, yet the data
+analysis and especially presentation require additional work.
+
+* Reviewer 1
+In the manuscript "Population genetics of Trichophorum planifolium
+structured by inbreeding, not distribution limits," the authors
+characterize the spatial genetic structure of a sedge with endangered
+status in Canada. This species has larger populations in the United States,
+but populations in Canada could be threatened by reduced genetic diversity
+at the range edge, consistent with the abundant center hypothesis. With a
+set of 11 microsatellite markers, the authors find that there is strong
+between population differentiation and large Fis that is not explained by
+the spatial configuration of populations or environmental variables. The
+authors conclude that geographic barriers and high rates of selfing have
+produced these patterns of genetic isolation across the distribution of T.
+planifolium.
+
+Overall, I think that the study system is of interest for its split
+conservation status and the somewhat surprising results found by the
+authors. That said, I found the manuscript a little to thin in terms of A)
+setting up concrete hypotheses supported by an understanding of the current
+literature and the biology of the system, B) fully exploring possible
+explanations for patterns of genetic diversity, and C) supporting
+conclusions in the discussion with analyses and references. Additionally,
+the writing was often awkward in the introduction and discussion, and I
+have highlighted some examples with potential solutions below.
+
+To explore the data more fully, I would suggest the authors report the
+pairwise F<SUB>st</SUB> values in addition to FD. This could facilitate a
+discussion about which populations are most different from others in the
+absence of spatial structure and act as another analysis to support the
+results of the sPCA. It would also be useful comparing among populations of
+interest, such as the Canadian populations or population MAMT, which was a
+noticeably lower F<SUB>is</SUB> than all others. Reporting these values
+would also be useful because they are referenced in the discussion
+(line 281) unless this meant to be F<SUB>D</SUB>.
+
+I am also concerned that the genetic structure in T. planifolium could be
+caused by clonal reproduction rather than inbreeding. Is there any reason
+to rule out asexual/clonal reproduction in this species? Clonality might
+better explain the high F<SUB>is</SUB> observed for this species,
+particularly given that it is wind pollinated and has mechanisms to limit
+the rates of selfing, regardless of how effective they might be. A study
+with Carex kobomugi, also an outcrossing sedge, capable of asexual
+reproduction found that clonal spread contributed strongly towards spatial
+genetic structure within populations; Ohsako 2010, AJB). If there is a
+reason to rule out clonal reproduction in this species (e.g. caespitose
+spp. lack enough rhizomatous growth for clonal spread), I would appreciate
+it if the authors included this explanation in the introduction and/or
+discussion. References to any papers that have explicitly identified
+inbreeding as the cause for similar spatial genomic patterns in other
+species would also more convincingly make this point.
+
+In the discussion, the authors mention that terrain complexity could
+inhibit gene flow and contribute to the high genotypic separation between
+populations (Lines 306-307). This could be tested with a resistance model
+(Isolation by resistance) (see Wang and Bradburd 2014, Molecular Ecology),
+and should be possible without collecting additional data. This analysis
+would add a more heft to the paper and would improve our understanding of
+how geneflow operates among these populations.
+
+I would also appreciate any analyses or outside information that can be
+included to better make the argument for the existence of two historic
+glacial refugia in this species (Lines 346-347). This could include an
+analysis that demonstrates the spread of T. planifolium out of the presumed
+refugia, such as comparisons of Ne or coalescent simulations, or a citation
+of another study that found a similar partitioning of genetic variation
+across geographic space.
+
+Lastly, I would also be curious if any metrics of genetic diversity are
+related to estimates of population size (effective population size, on the
+ground surveys, or density of observations in GBIF). This would be useful
+in partitioning the effects of genetic drift and inbreeding in low
+diversity populations and provide an analysis to support the assertion that
+bottlenecks have occurred in this species (e.g. line 364 and elsewhere).
+
+Other comments:
+- Line 45: Awkward start. I'm assuming that this means that for at-risk species, the peripheral populations form a significant proportion of something? What is the proportion?
+- Line 48: Should 'species' here instead be 'populations'? I am confused how an endangered species can be common. From the reference cited here (Yakimoswki and Eckert 2007), it appears that this is a national designation give abundance estimates within Canada, and that the plants are more common in the US? If so, it would be helpful to clarify the circumstances under which the status of these plants is designated and that it might not reflect the overall status of the species across its entire range. It might be worth bringing the sentence that stats on line 50 to the beginning of this paragraph for this reason.
+- Line 57: Another word is needed after 'genetic' here. Maybe something as general as 'factors'?;
+- Line 61: "adaptive and evolutionary potential" is an awkward way to refer to genetic diversity. I would suggest rephrasing this sentence.
+- Line 71-72: consider changing "…because they are related to gene flow" to "… because they strongly impact the rates of gene flow"
+- Line 72-73: remove "In this regard" and "level and"
+- Line 74: remove "add valuable information to"
+- Line 79: "Main criteria" for what?
+- Line 87: what 'factors' are being referred to here? Genetic/genomic? Climatic or ecological?
+- Line 90-92: Could you briefly explain why these factors are treated as interchangeable and what the problems with that approach would be? This breakdown would improve the apparent significance of the work presented in the manuscript.
+- Line 103-104: This statement was previously made in the preceding paragraph
+- Paragraph starting at 112: The most important function that this paragraph serves is explaining the mating system of T. planifolium. I would lead with this information in the first sentence, keep the information about seed dispersal, and then discuss how this likely impacts geneflow in the core and periphery of the species' range.
+- Line 124: remove comma
+- Line 138: With such a large range in sample sizes, I would prefer to see the median than the mean. Perhaps include both?
+- Line 152: remove "obtained"
+- Line 157: replace "were" with "was"
+- Line 219: Combine with previous paragraph
+- Line 294: Combine with previous paragraph
+- Line 375: While it may be true that low genetic diversity is not contributing to reduced fitness in this species, it seems reckless and unnecessary to suggest so without any data, particularly with anthropogenic climate change potentially leading to environmental disturbances in the future.
+- Line 377-379: Divergence in a small set of neutral markers is not an indicator of local adaptation.
+- Figure 3: The use of shape color and size to indicate a single value along an axis seems unnecessarily complicated. This figure would be much easier to interpret and explain if there was a single-color gradient that denoted the sPCA axis one values for each population. It would also allow for better visibility of populations that are near each other and space with large absolute axis 1 values, where the shapes currently overlap (e.g. Missouri populations).
+
+* Reviewer #2
+
+Review of "Population genetics of Trichophorum planifolum structured by
+inbreeding, not distribution limits"
+
+The authors were interested in testing predictions about the genetic
+structure of peripheral populations, and the population genetic structure
+of Trichophorum planifolum, more generally. The study applied 11 SSRs to
+investigate patterns of variation within and among 29 populations of T.
+planifolum. The study does have a useful conservation angle. However,
+unfortunately the current presentation of data is not sufficient to show
+clearly how the study advances the field of conservation genetics or
+phylogeography. Moreover, the ecological modeling component of this work
+has the potential to offer some unique insights, but is currently
+under-developed. Hopefully the comments below are helpful for further
+developing this paper.
+
+** Methods
+- Line 198 - Consider using Instruct which allows for inbreeding but allows for similar assignment based analysis of genetic structure
+- Line 207 - Clarify explanation of 'spatial neighbourhoods' - my understanding is that this was used an an analytic technique to investigate geographic regions - how many neighbourhoods are used in total (one per population, or only enough to include all populations?)
+- Line 218 - insert ("described below") or insert explantions into this paragraph.
+- Line 234+ - This estimate of ecological suitability could be 'played up' a lot more.  Although a good technical description of the variables incorporated is provided, a more biological explanation of how this data and model actually estimates the concept of 'suitability' is called for.  I also did not see 'ecological suitability' in the main questions outlined at the end of the Introduction.   Developing this concept further would be useful, and understanding how /whether 'ecological suitability' varies across a species range (and potentially beyond its current distribution?) would be of interest.
+
+** Results
+
+Overall the results need to be fleshed out a bit more. Although the
+diversity of MLGs within populations is low overall, there is still more
+information to be gained by describing in more detail the distribution of
+these genotypes within and among populations. And even in the amount of
+genetic variation is relatively low (and therefore may have little power
+for connected to ecological analysis), a much more quantitative
+presentation of the ecological model seems warranted here.
+
+Overall the figures don't provide a good visual of the genetic structure
+based on molecular markers. The histograms in Fig.2 are fine, but would be
+more useful to then see the distribution of the MLG within and among
+populations - perhaps a pie chart of haplotypes on the map (Fig 3) would
+work? I appreciate the effort to link PC1 with geography in Fig 3, but
+ultimately I think it would be more informative to see a scatterplot of PC1
+vs. PC2 with point coloured by geographic location (perhaps state?). Even
+with this coding system it is difficult to get the full sense of this
+quantitative variation.
+
+* Response
+** AE
+- The effect of clonality must be carefully addressed and its influence on
+  inbreeding coefficient clarified
+** Reviewer 1
+- [needs to set up] concrete hypotheses supported by an understanding of the
+  current literature and the biology of the system, 
+- [needs to fully explore] possible explanations for patterns of genetic
+  diversity
+- [needs to support] conclusions in the discussion with analyses and references
+- include pair-wise Fst in addition to Fd
+- check reference to Fst on line 281
+- is there a reason to rule out clonal reproduction?
+- add references to other papers that have explicitly identified inbreeding
+  as the cause for similar spatial genomic patterns in other species would
+  also more convincingly make this point
+- apply a resistance model to test the influence of terrain complexity on
+  gene flow
+- provide outside info re: separate Ozark and Appalachian refugia
+  - comparison of Ne, coalescent simulations, cite other studies
+- relate genetic diversity metrics to estimates of population
+  size/population density (from GBIF records)    
+
+- Line 45: Awkward start. I'm assuming that this means that for at-risk species, the peripheral populations form a significant proportion of something? What is the proportion?
+- Line 48: Should 'species' here instead be 'populations'? I am confused how an endangered species can be common. From the reference cited here (Yakimoswki and Eckert 2007), it appears that this is a national designation give abundance estimates within Canada, and that the plants are more common in the US? If so, it would be helpful to clarify the circumstances under which the status of these plants is designated and that it might not reflect the overall status of the species across its entire range. It might be worth bringing the sentence that stats on line 50 to the beginning of this paragraph for this reason.
+- Line 57: Another word is needed after 'genetic' here. Maybe something as general as 'factors'?;
+- Line 61: "adaptive and evolutionary potential" is an awkward way to refer to genetic diversity. I would suggest rephrasing this sentence.
+- Line 71-72: consider changing "…because they are related to gene flow" to "… because they strongly impact the rates of gene flow"
+- Line 72-73: remove "In this regard" and "level and"
+- Line 74: remove "add valuable information to"
+- Line 79: "Main criteria" for what?
+- Line 87: what 'factors' are being referred to here? Genetic/genomic? Climatic or ecological?
+- Line 90-92: Could you briefly explain why these factors are treated as interchangeable and what the problems with that approach would be? This breakdown would improve the apparent significance of the work presented in the manuscript.
+- Line 103-104: This statement was previously made in the preceding paragraph
+- Paragraph starting at 112: The most important function that this paragraph serves is explaining the mating system of T. planifolium. I would lead with this information in the first sentence, keep the information about seed dispersal, and then discuss how this likely impacts geneflow in the core and periphery of the species' range.
+- Line 124: remove comma
+- Line 138: With such a large range in sample sizes, I would prefer to see the median than the mean. Perhaps include both?
+- Line 152: remove "obtained"
+- Line 157: replace "were" with "was"
+- Line 219: Combine with previous paragraph
+- Line 294: Combine with previous paragraph
+- Line 375: While it may be true that low genetic diversity is not contributing to reduced fitness in this species, it seems reckless and unnecessary to suggest so without any data, particularly with anthropogenic climate change potentially leading to environmental disturbances in the future.
+- Line 377-379: Divergence in a small set of neutral markers is not an indicator of local adaptation.
+- Figure 3: The use of shape color and size to indicate a single value along an axis seems unnecessarily complicated. This figure would be much easier to interpret and explain if there was a single-color gradient that denoted the sPCA axis one values for each population. It would also allow for better visibility of populations that are near each other and space with large absolute axis 1 values, where the shapes currently overlap (e.g. Missouri populations).
+
+** Reviewer 2
+- Line 198 - Consider using Instruct which allows for inbreeding but allows
+  for similar assignment based analysis of genetic structure 
+- Line 207 - Clarify explanation of 'spatial neighbourhoods' - my
+  understanding is that this was used an an analytic technique to
+  investigate geographic regions - how many neighbourhoods are used in
+  total (one per population, or only enough to include all populations?) 
+- Line 218 - insert ("described below") or insert explantions into this
+  paragraph. 
+- Line 234+ - This estimate of ecological suitability could be 'played up'
+  a lot more. Although a good technical description of the variables
+  incorporated is provided, a more biological explanation of how this data
+  and model actually estimates the concept of 'suitability' is called for.
+  I also did not see 'ecological suitability' in the main questions
+  outlined at the end of the Introduction. Developing this concept further
+  would be useful, and understanding how /whether 'ecological suitability'
+  varies across a species range (and potentially beyond its current
+  distribution?) would be of interest.
+- describe in detail the distribution of genotypes within and among
+  populations
+- more quantitative presentation of the ecological model
+- show distribution of haplotypes on map (pie charts?)
+- would rather see the regular ordination, rather than the spPCA
