@@ -204,6 +204,12 @@ diag(fstmat) <- NA
 meanFst <- rowMeans(fstmat, na.rm = TRUE)
 samples[colnames(t(meanFst)), "meanFst"]  <- meanFst
 
+fst1 <- apply(fstmat, 2, function(x) any(x == 1, na.rm = TRUE))
+##fstmat[fst1, fst1]
+
+fst0 <- apply(fstmat, 2, function(x) any(x <= 0, na.rm = TRUE))
+##fstmat[fst0, fst0]
+
 ## Private Alleles
 ## requires poppr
 Ap <- rowSums(private_alleles(trichGI4, count.alleles = FALSE))
@@ -329,7 +335,6 @@ zm <- new("Extent", xmin = 40000,
          ymax = 20000) 
 
 trich.proj <- spTransform(gbifthin, canlam)
-samples.proj <- spTransform(samples, canlam)
 ```
 
 ## SDM
@@ -352,6 +357,7 @@ predTR <- projectRaster(eval.opt@predictions, rasterProj)
 predTR[predTR < quantile(getValues(predTR),
                          probs = 0.85, na.rm = TRUE)] <- NA
 
+samples.proj <- spTransform(samples, canlam)
 ```
 ## sPCA
 
@@ -368,22 +374,22 @@ trich.spca1 <- spca(trichGP4, cn = lw3, scannf=FALSE,
 X <- tab(trichGP4, freq = TRUE)
 trich.pca <- ade4::dudi.pca(X, nf = 2, scannf = FALSE) 
 
-## s.value(trich.spca1$xy, trich.spca1$li[, 1], include.origin = FALSE)
-## plot(lw3, add = TRUE, coords = trich.spca1$xy)
+  ## s.value(trich.spca1$xy, trich.spca1$li[, 1], include.origin = FALSE)
+  ## plot(lw3, add = TRUE, coords = trich.spca1$xy)
 
 grt <- global.rtest(trich.spca1$tab, lw3, k = 1, nperm = 4999)
 
 myLoadings <- trich.spca1$c1[, 1]^2
 names(myLoadings) <- rownames(trich.spca1$c1)
-## loadingplot(myLoadings, xlab="Alleles",
-##             ylab="Weight of the alleles",
-##             main="Contribution of alleles\n to the first sPCA axis")
+  ## loadingplot(myLoadings, xlab="Alleles",
+  ##             ylab="Weight of the alleles",
+  ##             main="Contribution of alleles\n to the first sPCA axis")
 
-## temp <- loadingplot(myLoadings, threshold = quantile(myLoadings, 7/8),
-##                    xlab = "Alleles", ylab = "Weight of the alleles",
-##                    main =
-##                      "Contribution of alleles\n to the first sPCA axis",
-##                    fac = trichGP4$loc.fac, cex.fac = 0.6)
+  ## temp <- loadingplot(myLoadings, threshold = quantile(myLoadings, 7/8),
+  ##                    xlab = "Alleles", ylab = "Weight of the alleles",
+  ##                    main =
+  ##                      "Contribution of alleles\n to the first sPCA axis",
+  ##                    fac = trichGP4$loc.fac, cex.fac = 0.6)
 ```
 
 ```{R Locus TP330 map, fig.width = 7, fig.height = 5, dev = 'jpeg', fig.show = 'hold', dpi = 200, fig.caption = "*Trichophorum planifolium* Populations Sampled, color indicates frequency of allele TP330.356 in population.", eval = FALSE}
@@ -398,6 +404,7 @@ plot(gl.proj, add = TRUE, border = "grey", col = "lightblue")
 points(samples.proj, cex = 3, pch = 22, bg = grey(tab(trichGP4, freq = TRUE)[, c("TP330.356")]), col = "grey")
 box()
 ```
+
 # Figures
 ## Regressions
 
@@ -478,5 +485,94 @@ gbifthin@data %>% ggplot() +
   aes(x = log(suitability), y = log(isolation)) +
   geom_point(size = 3) + geom_smooth(method = "lm") +
   ggtitle("Isolation ~ Suitability")
+
+```
+
+# Revision Figures
+
+```{R mlg-figs} 
+dev.new(height = 9, width = 7.25)
+
+tyScaler <- function(x){
+  x <- x - min(x)
+  x <- (6 * x/max(x)) + 1
+  x
+}
+
+
+emlgEX <- samples.proj$emlg
+emlgEX[is.na(emlgEX)] <- 1
+emlgEX <- tyScaler(emlgEX)
+isolationEX <- tyScaler(samples.proj$isolation)
+divergenceEX <- tyScaler(samples.proj$meanFst)
+marginalEX <- tyScaler(samples.proj$marginality)
+suitabilityEX <- tyScaler(samples.proj$suitability)
+
+## isolationEX <- (scale(samples.proj$isolation, center = FALSE)
+##   + 1) * 2
+## divergenceEX <- scale(samples.proj$meanFst, center = FALSE)
+## divergenceEX <- (divergenceEX/min(divergenceEX))^4
+## marginalEX <- samples.proj$marginality/2 + 1
+
+par(mfrow = c(3, 2), mar = c(0.1, 0.1, 3, 0.1))
+## eMLG richness:
+plot(ca.proj, xlim = c(zm@xmin, zm@xmax),
+     ylim = c(zm@ymin, zm@ymax), border = "grey",
+     bg = "lightblue", col = "white",
+     main = "eMLG Richness")
+plot(us.proj, add = TRUE, border = "grey", col = "white")
+plot(gl.proj, add = TRUE, border = "grey", col = "lightblue")
+##points(samples.proj, cex = axex, pch = 22, bg = grey(axcol/max(axcol)),
+##       col = "grey")
+points(samples.proj, cex = emlgEX, pch = 22,
+       col = "black")
+box()
+
+## Genetic divergence
+plot(ca.proj, xlim = c(zm@xmin, zm@xmax),
+     ylim = c(zm@ymin, zm@ymax), border = "grey",
+     bg = "lightblue", col = "white",
+     main = "FD Divergence")  
+plot(us.proj, add = TRUE, border = "grey", col = "white")
+plot(gl.proj, add = TRUE, border = "grey", col = "lightblue")
+points(samples.proj, cex = divergenceEX, pch = 22, col = "black")
+box()
+
+## isolation:
+plot(ca.proj, xlim = c(zm@xmin, zm@xmax),
+     ylim = c(zm@ymin, zm@ymax), border = "grey",
+     bg = "lightblue", col = "white",
+     main = "Isolation")  
+plot(us.proj, add = TRUE, border = "grey", col = "white")
+plot(gl.proj, add = TRUE, border = "grey", col = "lightblue")
+points(trich.proj, pch = 16, col = "#00C010", cex = 0.7)
+points(samples.proj, cex = isolationEX, pch = 22, col = "black")
+box()
+
+## peripherality
+plot(ca.proj, xlim = c(zm@xmin, zm@xmax),
+     ylim = c(zm@ymin, zm@ymax), border = "grey",
+     bg = "lightblue", col = "white",
+     main = "Peripherality")  
+plot(us.proj, add = TRUE, border = "grey", col = "white")
+plot(gl.proj, add = TRUE, border = "grey", col = "lightblue")
+points(trich.proj, pch = 16, col = "#00C010", cex = 0.7)
+points(samples.proj, cex = marginalEX, pch = 22, col = "black")
+box()
+
+## marginality
+plot(ca.proj, xlim = c(zm@xmin, zm@xmax),
+     ylim = c(zm@ymin, zm@ymax), border = "grey",
+     bg = "lightblue", col = "white",
+     main = "Marginality")  
+plot(us.proj, add = TRUE, border = "grey", col = "white")
+plot(predTR, add = TRUE, legend = FALSE)
+plot(ca.proj, add = TRUE, border = "grey")
+plot(us.proj, add = TRUE, border = "grey")
+plot(gl.proj, add = TRUE, border = "grey", col = "lightblue")
+#points(trich.proj, pch = 16, col = "#00C010", cex = 0.7)
+points(samples.proj, cex = suitabilityEX, pch = 22, col = "black")
+box()
+
 
 ```

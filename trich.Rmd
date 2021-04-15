@@ -9,7 +9,7 @@ output:
     number_sections: false
 bibliography: plantarum.json
 csl: american-journal-of-botany.csl
-updated: 2021-03-05
+updated: 2021-04-14
 author: "Tyler W. Smith, Victoria J. Nowell, and Song Wang"
 date: 2021-02-11
 ---
@@ -71,29 +71,30 @@ library(knitr)
 knit("trich-prep.Rmd", quiet = TRUE)
 ```
 
-In high-latitude countries, geographically peripheral populations form a
-significant proportion of species-at-risk [@YakimowskiEckert_2007;
-@GibsonEtAl_2009]. For example, in Canada, approximately 90% of threatened
-or endangered plant species are locally rare representatives of species
-that reach the northern extent of their range in Canada, but are common
-further south [@YakimowskiEckert_2007]. Concern over the investment of
-conservation resources into species that are locally rare but globally
-common has led to debate over whether, or when, peripheral populations
-merit national concern [e.g., @HunterHutchinson_1994; @HampePetit_2005;
-@GibsonEtAl_2009].
+In high-latitude countries, a high proportion of species identified as
+requiring legal protection (i.e., Endangered species) are actually
+geographically peripheral populations of species common at lower latitudes
+[@YakimowskiEckert_2007; @GibsonEtAl_2009]. For example, in Canada,
+approximately 90% of listed Threatened or Endangered plant species are
+locally rare representatives of species that reach the northern extent of
+their range in Canada, but are abundant further south
+[@YakimowskiEckert_2007]. Concern over the investment of conservation
+resources into species that are locally rare but globally common has led to
+debate over whether, or when, peripheral populations merit national concern
+[e.g., @HunterHutchinson_1994; @HampePetit_2005; @GibsonEtAl_2009].
 
 Peripheral populations are typically small and geographically isolated due
 to increased habitat variability and reduced resource availability at the
 range margin [i.e., the abundant center hypothesis, @Brown_1984].
 Consequently, they may be at greater risk of extirpation due to genetic
-(i.e., inbreeding depression) as well as stochastic demographic,
+factors (i.e., inbreeding depression) as well as stochastic demographic,
 environmental and catastrophic factors [@SouleMills_1998; @BrookEtAl_2002].
 These risks may be exacerbated by anthropogenic threats such as habitat
 loss and fragmentation [@YoungEtAl_1996]. Nevertheless, peripheral
-populations may be important sources of adaptive and evolutionary potential
-for the species [@SafrielEtAl_1994; @LeppigWhite_2006; @EckertEtAl_2008],
-harbouring unique genetic diversity and/or adaptations to conditions at the
-range edge [@LesicaAllendorf_1995; @BunnellEtAl_2004].
+populations may be important sources of genetic diversity for the species
+[@SafrielEtAl_1994; @LeppigWhite_2006; @EckertEtAl_2008], harbouring unique
+genetic diversity and/or adaptations to conditions at the range edge
+[@LesicaAllendorf_1995; @BunnellEtAl_2004].
 
 However, not all peripheral populations are genetically differentiated from
 core populations [@LesicaAllendorf_1995; @LeppigWhite_2006]. In a review of
@@ -102,12 +103,11 @@ studies identified increased genetic differentiation towards the range
 margin. These differences may be attributable to species-specific
 characteristics [@GibsonEtAl_2009]. In plants, life-history characteristics
 (i.e., breeding system and dispersal mechanisms) are a major determinant of
-population genetic structure, because they are related to gene flow
-[@LovelessHamrick_1984; @FrankelEtAl_1995]. In this regard, knowledge of
-the level and spatial distribution of intraspecific genetic diversity can
-add valuable information to guide conservation efforts for peripheral
-populations, especially when the reproductive biology and ecology of the
-species is not well understood.
+population genetic structure, because they strongly impact the rates of
+gene flow [@LovelessHamrick_1984; @FrankelEtAl_1995]. Knowledge of the
+spatial distribution of intraspecific genetic diversity can guide
+conservation efforts for peripheral populations, especially when the
+reproductive biology and ecology of the species is not well understood.
 
 @LesicaAllendorf_1995 proposed a framework for evaluating the conservation
 value of peripheral populations, identifying population isolation and
@@ -125,12 +125,30 @@ approaches to assess the factors generally influencing range limits
 [@CrossEckert_2020]. There is a growing recognition of the need to
 distinguish between related spatial and ecological processes contributing
 to the distribution limits of species [@WilliVanBuskirk_2019;
-@Lee-YawEtAl_2018]. Three key concepts are frequently treated as loosely
-interchangeable: geographic peripherality, geographic isolation, and
-ecological marginality. However, the increasing availability of
-high-resolution distribution and environmental data provides an opportunity
-to examine the distinct influences of these processes on species range
-limits.
+@Lee-YawEtAl_2018]. 
+
+Three key concepts are frequently treated as loosely interchangeable:
+geographic peripherality, geographic isolation, and ecological marginality.
+Indeed, one of the key contributions of @Brown_1984 was connecting work
+showing unimodal abundance distributions of organisms along ecological
+gradients [@Whittaker_1956], with biogeographic work showing a similar
+unimodal abundance distribution across the larger scale of the geographic
+range of a species [@Bystrak_1979]. The resulting theory proposed that
+observed patterns of declining abundance from the range center to the range
+margin could be explained by the assumed decline in ecological suitability
+(i.e., increasing marginality), and increase in geographic isolation,
+experienced by populations at the range edge (i.e., geographic
+peripherality).
+
+While this theory has motivated a great deal of research, empirical support
+is limited [@SagarinEtAl_2006, @EckertEtAl_2008]. Explaining this mismatch
+between theory and observation will require re-examining this assumption.
+It is therefore crucial to develop measures to quantify each of these three
+concepts in isolation, both to test their assumed relationship, and to
+determine their individual and combined influence of species abundance and
+genetic diversity. The increasing availability of high-resolution
+distribution and environmental data provides an opportunity to do this
+[@Lee-YawEtAl_2018, @WilliVanBuskirk_2019, @CrossEckert_2020].
 
 *Trichophorum planifolium* (Sprengel) Palla, commonly known as Few-flowered
 Club-rush or Bashful Bulrush, is a species that is rare at its northern
@@ -142,8 +160,6 @@ Massachusetts west to Ontario and south to Virginia and Kentucky, with
 disjunct populations occurring in Missouri and southern Illinois (Figure
 \@ref(fig:distmap)).
 
-In general, *T. planifolium* is considered common within the central
-portion of its range, but rare along the periphery [@SmithRothfels_2007].
 The only extant locality in Canada is in southern Ontario, in the nature
 sanctuaries at Royal Botanical Gardens in Hamilton, Ontario. *Trichophorum
 planifolium* was previously known from one other location in Ontario, in
@@ -152,17 +168,35 @@ since 2005 [@SmithRothfels_2007]. Due to its limited Canadian range and an
 apparent decline in population size, *T. planifolium* is listed as
 Endangered under the Canadian Species at Risk Act [SARA, @COSEWIC_2000]. 
 
-The species is caespitose, growing in dense, low tufts (~ 40 cm) from short
-rhizomes. It is wind-pollinated, possessing long exerted styles and stamens
-and lacking both a showy perianth and nectaries [@Crins_1989;
-@IwanyckiEtAl_2010]. Seeds mature in mid-summer and disperse in late July
-to August [@IwanyckiEtAl_2010]. A mechanism for seed dispersal has not been
-confirmed [@SmithRothfels_2007], but it has been suggested that the matting
-of leaves and stems during the fruiting period may limit most seed
-dispersal to within a meter of the parent plants, leading to the formation
-of colonies of closely related sibling groups [@Crins_1989]. It has been
-suggested that low recruitment observed at the Hamilton site may be due to
-limited intrapopulational genetic diversity [@SmithRothfels_2007].
+*Trichophorum planifolium* is wind-pollinated, possessing long exerted
+styles and stamens and posessing neither a showy perianth or nectaries
+[@Crins_1989; @IwanyckiEtAl_2010]. Seeds mature in mid-summer and disperse
+in late July to August [@IwanyckiEtAl_2010]. A mechanism for seed dispersal
+has not been confirmed [@SmithRothfels_2007], but it has been suggested
+that the matting of leaves and stems during the fruiting period may limit
+most seed dispersal to within a meter of the parent plants, leading to the
+formation of colonies of closely related sibling groups [@Crins_1989]. The
+species is caespitose, growing in dense, low tufts (~ 40 cm high).
+Individual plants reach a maximum diameter of 20-30 cm, and lack the long
+rhizomes present in clonally spreading sedges such as /Carex pensylvanica/
+Lamarck [@CrinsRettig_2002]. It has been suggested that low recruitment
+observed at the Hamilton site may be due to limited intrapopulational
+genetic diversity [@SmithRothfels_2007].
+
+The species is caespitose, growing in dense, low tufts (~ 40 cm high).
+Individual plants reach a maximum diameter of 20-30 cm, and lack the long
+rhizomes present in clonally spreading sedges such as /Carex pensylvanica/
+Lamarck [@CrinsRettig_2002]. It is wind-pollinated, possessing long exerted
+styles and stamens and lacking both a showy perianth and nectaries
+[@Crins_1989; @IwanyckiEtAl_2010]. Seeds mature in mid-summer and disperse
+in late July to August [@IwanyckiEtAl_2010]. A mechanism for seed dispersal
+has not been confirmed [@SmithRothfels_2007], but it has been suggested
+that the matting of leaves and stems during the fruiting period may limit
+most seed dispersal to within a meter of the parent plants, leading to the
+formation of colonies of closely related sibling groups [@Crins_1989]. It
+has been suggested that low recruitment observed at the Hamilton site may
+be due to limited intrapopulational genetic diversity
+[@SmithRothfels_2007].
 
 The main objective of our research was to assess genetic variability within
 the Canadian population, and to quantify the relationship between the
@@ -255,7 +289,7 @@ sumTable %>%
          ) %>%
   select(population, Latitude, Longitude,
          N, Ap, Ar, mlg, emlg, Hs, Ho, Fis, Fst) %>%
-  kable(caption = "Populations sampled. The first two letters of the Population Code indicate the US state or Canadian province. N: total samples per population (samples with all 11 loci scored in parentheses). Ap: private alleles. Ar: mean allelic richness per locus. mlg: multilocus genotypes. eMLG: multilocus genotypes in rarefied samples of 10 individuals. Hs: gene diversity. Ho: observed heterozygosity.") 
+  kable(caption = "*Trichophorum planifolium* populations sampled. Population: the population code, the first two letters indicate the US state or Canadian province. Lat and Lon: geographic coordinates. N: total samples per population (samples with all 11 loci scored in parentheses). Ap: private alleles. Ar: mean allelic richness per locus. MLG: multilocus genotypes. eMLG: multilocus genotypes in rarefied samples of 10 individuals. Hs: gene diversity. Ho: observed heterozygosity. F IS : population inbreeding coefficient. F D : mean pairwise F ST for the population when compared to all other populations. The value in the Total row for the FD column is the global Fst value.")
 ```
 
 ## Genetic Analysis
@@ -403,23 +437,63 @@ All analyses were performed in R version 4.0 [@RCoreTeam_2020], unless
 otherwise specified.
 
 # RESULTS
-We scored a total of 505 individual genotypes for at least 8 loci, and
-completed all 11 loci for 408 individuals (Table \@ref(tab:sumtab)). 46
-alleles were detected (mean 4.2 per locus, range 2--9), and a total of 115
-unique multi-locus genotypes (MLG) were described. All but three MLG were
-confined to a single population. One MLG was shared by two Missouri
-populations; one was shared by two Ohio populations; and one MLG was found
-in three populations, one each in Connecticut, Maryland, and eastern New
-York.
+We scored a total of 505 individual genotypes (mean 16.8 per population)
+for at least 8 loci, and completed all 11 loci for 408 individuals (Table
+\@ref(tab:sumtab)). 46 alleles were detected (mean 4.2 per locus, range
+2--9), and a total of 115 unique multi-locus genotypes (MLG) were
+described. All but three MLG were confined to a single population. One MLG
+was shared by two Missouri populations; one was shared by two Ohio
+populations; and one MLG was found in three populations, one each in
+Connecticut, Maryland, and eastern New York.
 
 465 (92.1%) individuals were homozygous for all alleles, with only 40
 individuals heterozygous at one or more loci. Of the 25 populations with at
 least 10 individuals genotyped, the mean eMLG (i.e., genotypes per 10
 individuals) was 3.1 (range 1--6.5, Figure \@ref(fig:sumplots)). The
 Ontario population had an eMLG of 1.37, corresponding to the 20th
-percentile of the distribution. The mean F~D~ was 0.79 (range 0.59--0.9,
-Figure \@ref(fig:sumplots)); F~D~ for the Ontario population was 0.87,
-corresponding to the 80th percentile of the distribution.
+percentile of the distribution. 
+
+The pair-wise F~ST~ values ranged from 0 to 1 (mean 0.79, Figure
+\@ref(fig:fstplots)). A group of five populations shared mutual
+pairwise-F~ST~ values of exactly 1: CTTP, MAST, OHBH, OHSC, VAHB. This is a
+consequence of each of these populations being fixed for a different
+homozygous MLG. Populations OHBH and OHPR had a pairwise F~ST~ of -0.01
+[corrected for heterozygosity, @GoudetJombart_2015], as a consequence of
+the single MLG present in OHBH (all 13 samples), also occuring in 16 of 18
+samples from OHPR.
+
+The mean F~D~ was 0.79 (range 0.59--0.9, Figure \@ref(fig:fstplots)). F~D~
+for the Ontario population was 0.87, corresponding to the 80th percentile
+of the distribution. The least divergent populations (in increasing order)
+were MOBU, WVFM, NYTS, NHER and PAGP (F~D~ = 0.60 -- 0.68). The most
+divergent populations (in decreasing order) were NYMP, VAHB, MAST, CTTP,
+OHSC, ONRB (F~ST~ 0.87--0.9).
+
+```{R fstplots, fig.width = 6, fig.height = 3, dev = 'jpeg', dpi = 200, echo = FALSE, fig.show = "hold", fig.cap = "Distribution of pair-wise Fst values and population mean pair-wise Fst values (F_D). The red line indicates the population in Ontario, Canada."}
+dev.new(height = 3.5, width = 7)
+
+par(mfrow = c(1, 2))
+par(mar = c(3.5, 3.5, 0.5, 0.5))
+hist(trichFst, breaks = 12, main = "", xlab = "", ylab = "",
+     axes = FALSE) 
+#abline(v = data.frame(samples)["ONRB", "emlg"], col = 2, lwd = 4)
+
+axis(side = 2, cex.axis = 0.7, tcl = -0.33, padj = 0.75)
+mtext(side = 2, line = 2, "Frequency")
+axis(side = 1, cex.axis = 0.7, tcl = -0.33, padj = -0.75)
+mtext(side = 1, line = 2, expression('Pair-wise F'[ST]))
+
+par(mar = c(3.5, 1.5, 0.5, 0.5))
+hist(samples$meanFst, breaks = 12, main = "", xlab = "",
+     ylab = "", axes = FALSE)
+abline(v = data.frame(samples)["ONRB", "meanFst"], col = 2, lwd = 4)
+
+axis(side = 2, cex.axis = 0.7, tcl = -0.33, padj = 0.75)
+axis(side = 1, cex.axis = 0.7, tcl = -0.33, padj = -0.75)
+mtext(side = 1, line = 2, text = expression('F'[D]))
+
+```
+
 
 ```{R sumplots, fig.width = 6, fig.height = 3, dev = 'jpeg', dpi = 200, echo = FALSE, fig.show = "hold", fig.cap = "Distribution of rarified multi-locus genotypes (eMLG) and population mean pair-wise Fst values (F_D). The red line indicates the population in Ontario, Canada."}
 #dev.new(height = 3.5, width = 7)
@@ -540,12 +614,12 @@ kable(lms,
 # DISCUSSION
 We found no evidence to support the hypothesis that genetic diversity
 declines with geographic peripherality, ecological marginality, or spatial
-isolation. However, the highly structured populations (F_ST = 0.8) and
-significant east-west spatial structure suggest that this lack of pattern
-is not due to 'swamping' gene flow from the core of the distribution
-homogenizing genetic diversity in peripheral populations. If that were the
-case, we would expect to see lower among-population variation (F_ST), and
-relatively higher within-population variation (F_IS).
+isolation. However, the highly structured populations (i.e., global F_ST =
+0.8) and significant east-west spatial structure suggest that this lack of
+pattern is not due to 'swamping' gene flow from the core of the
+distribution homogenizing genetic diversity in peripheral populations. If
+that were the case, we would expect to see lower among-population variation
+(F_ST), and relatively higher within-population variation (F_IS).
 
 This contrasts with other recent studies that have found significant
 relationships between genetic diversity and spatial or environmental
@@ -611,14 +685,15 @@ culms from the same individual, and more physical mixing among individuals.
 This leads to greater intra-population diversity, and less differentiation
 among populations [@FordEtAl_1998].
 
-*Trichphorum planifolium* fits the description of *Carex* Group 1, aside
-from having bisexual flowers. This likely further exacerbates inbreeding,
-as it may engage in both autogamous and geitenogamous selfing. The low
-levels of heterozygosity we observed (Ho 0.00--0.03, Table
-\@ref(tab:sumtab)) are comparable to values reported for other sedges:
-*Trichophorum caespitosum*: Ho = 0.01 to 0.04 [@GodtEtAl_1996], *Carex
-loliaceae*: Ho = 0.00 to 0.12 [@KullOja_2007] and *Carex magellanica*
-subsp. *irrigua*: Ho = 0.00 to 0.03 [@KullOja_2010]. 
+A caespitose species incapable of rhizomatous spread, *Trichphorum
+planifolium* fits the description of *Carex* Group 1, aside from having
+bisexual flowers. This likely further exacerbates inbreeding, as it may
+engage in both autogamous and geitenogamous selfing. The low levels of
+heterozygosity we observed (Ho 0.00--0.03, Table \@ref(tab:sumtab)) are
+comparable to values reported for other sedges: *Trichophorum caespitosum*:
+Ho = 0.01 to 0.04 [@GodtEtAl_1996], *Carex loliaceae*: Ho = 0.00 to 0.12
+[@KullOja_2007] and *Carex magellanica* subsp. *irrigua*: Ho = 0.00 to 0.03
+[@KullOja_2010].
 
 The main geographic structure in the genetic data reveals a broad division
 between Missouri and the eastern populations (Figure \@ref(fig:distmap)).
