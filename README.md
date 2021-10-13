@@ -29,6 +29,8 @@ Start with trich.Rmd to see read our draft manuscript. See trich-prep.Rmd for th
 
 - **data/trich-gbif.csv** : GBIF records used in the Maxent analysis
 
+- **data/trich_soil.csv** : Soil analysis for each sampled population
+
 - **data/maps** : Maps (shapefiles and rasters) used in the Maxent analysis,
   and for some of the manuscript plots
 
