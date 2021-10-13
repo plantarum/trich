@@ -9,49 +9,39 @@ output:
     number_sections: false
 bibliography: plantarum.json
 csl: american-journal-of-botany.csl
-updated: 2021-04-14
-author: "Tyler W. Smith, Victoria J. Nowell, and Song Wang"
+updated: 2021-10-13
+author: "Victoria J. Nowell, Song Wang, and Tyler W. Smith"
 date: 2021-02-11
 ---
 
 # Abstract
-
-## Premise
-
 Peripheral populations are understood to hold special conservation
 significance as repositories of divergent genetic diversity. They may also
 be at increased risk of extirpation, due to a combination of small size,
-isolation, and marginal habitat conditions. However, empirical studies
-testing these expectations yield mixed results. We evaluated the
-relationship between genetic diversity, geographical range limits, spatial
-isolation, and environmental conditions. This work provides important
-insight into the conservation of peripheral populations, and contributes to
-our understanding of the factors shaping range limits.
-
-## Methods
-
-We used population samples, herbarium records, and climate data to survey
-genetic diversity, geographic distribution, and environmental niche
-characteristics of *Trichophorum planifolium* across its range in eastern
-North America. Our analysis included distinct measures of geographic
-peripherality, spatial isolation, and niche marginality, allowing us to
-assess the influence of each of these factors on genetic diversity. 
-
-## Results
-
-Our data show that populations of *T. planifolium* have remarkably low
-diversity, with the majority of populations having fewer than 3 distinct
-multi-locus genotypes. While there was significant spatial structure, we
-found no relationship between genetic diversity and peripherality,
-isolation, or marginality.
-
-## Conclusions
-
-In *T. planifolium*, population genetic diversity is primarily a reflection
-of local processes. Its reproductive biology favours inbreeding, and
-genetic diversity is paritioned almost entirely among populations. This
-highlights the importance of life history characteristics when
-evaluating biogeographic patterns.
+isolation, and marginal habitat conditions. We collected genetic,
+ecological, and distributional data to evaluate these hypotheses for an
+endangered range-edge population of the woodland sedge *Trichophorum
+planifolium*. Our data show that, range-wide, *T. planifolium* has
+remarkably low within-population diversity (F~ST~ 0.8, 1% heterozygosity).
+Most populations are dominated by a small number of distinct multi-locus
+genotypes. Population differentiation for this species is much higher than
+other outcrossing, wind-pollinated species. However, the extremely low
+observed heterozygosity we document is comparable to results from other
+woodland sedges. This suggests that the life history of this group of
+plants results in high levels of inbreeding. In this context, the somewhat
+reduced diversity and limited divergence of the lone remaining Canadian
+population is not remarkable, and does not support suggestions that the
+population suffers from unusual levels of inbreeding. Despite being located
+on the geographic margin of the species' range, the climatic conditions at
+the remaining Canadian population are not extreme compared to the rest of
+the range in the northeastern US. However, it is geographically isolated,
+and the soil conditions at the location are unusual for the species.
+Cluster analysis shows that most populations across the range of the
+species share relatively homogeneous soil conditions. In constrast, the
+Canadian population forms a small outlying cluster with extreme nutrient
+values. Thus, while this outlying population does not appear to be
+divergent genetically, it's geographic isolation and divergent
+environmental conditions indicate it may hold important conservation value.
 
 # Keywords
 abundant center hypothesis; 
@@ -66,10 +56,12 @@ species distribution models
 
 No limit, aim for 8000 words.
 
-```{R init, echo = FALSE, results = "hide"}
+```{R init, echo = FALSE, results = "hide", warning = FALSE, message = FALSE, error = FALSE}
 library(knitr)
-knit("trich-prep.Rmd", quiet = TRUE)
+knit("trich-prep.Rmd")
 ```
+
+<!-- the conservation value of peripheral populations is controversial -->
 
 In high-latitude countries, a high proportion of species identified as
 requiring legal protection (i.e., Endangered species) are actually
@@ -82,6 +74,9 @@ their range in Canada, but are abundant further south
 resources into species that are locally rare but globally common has led to
 debate over whether, or when, peripheral populations merit national concern
 [e.g., @HunterHutchinson_1994; @HampePetit_2005; @GibsonEtAl_2009].
+
+<!-- Peripheral populations may contain important genetic diversity, while
+    also facing elevated risk of extirpation -->
 
 Peripheral populations are typically small and geographically isolated due
 to increased habitat variability and reduced resource availability at the
@@ -96,18 +91,20 @@ populations may be important sources of genetic diversity for the species
 genetic diversity and/or adaptations to conditions at the range edge
 [@LesicaAllendorf_1995; @BunnellEtAl_2004].
 
-However, not all peripheral populations are genetically differentiated from
-core populations [@LesicaAllendorf_1995; @LeppigWhite_2006]. In a review of
-134 genetic studies in plants, [@EckertEtAl_2008] found that only 70.3% of
-studies identified increased genetic differentiation towards the range
-margin. These differences may be attributable to species-specific
-characteristics [@GibsonEtAl_2009]. In plants, life-history characteristics
-(i.e., breeding system and dispersal mechanisms) are a major determinant of
-population genetic structure, because they strongly impact the rates of
-gene flow [@LovelessHamrick_1984; @FrankelEtAl_1995]. Knowledge of the
-spatial distribution of intraspecific genetic diversity can guide
-conservation efforts for peripheral populations, especially when the
-reproductive biology and ecology of the species is not well understood.
+<!-- Attempts to confirm the hypothesized relationship between geographic
+    distribution and genetic diversity have mixed success -->
+
+However, empirical studies attempting to quantify the genetic
+differentiation of peripheral plant populations have produced mixed results
+[@EckertEtAl_2008]. The lack of consistent range-edge genetic
+differentiation may be attributable in part to species-specific attributes
+[@GibsonEtAl_2009]. In plants, life-history characteristics (i.e., breeding
+system and dispersal mechanisms) are a major determinant of population
+genetic structure, because they strongly impact the rates of gene flow
+[@LovelessHamrick_1984; @FrankelEtAl_1995]. Knowledge of the spatial
+distribution of intraspecific genetic diversity can guide conservation
+efforts for peripheral populations, especially when the reproductive
+biology and ecology of the species is not well understood.
 
 @LesicaAllendorf_1995 proposed a framework for evaluating the conservation
 value of peripheral populations, identifying population isolation and
@@ -116,39 +113,10 @@ genetic markers, such as microsatellites, can be used to identify
 populations that have experienced restricted gene flow (i.e., are
 genetically isolated) [@CrandallEtAl_2000; @Moritz_2002]. However,
 microsatellite markers cannot provide information on adaptive divergence of
-populations [@HoldereggerEtAl_2006]. Therefore, to capture variation in
-selection pressures across the species' range, environmental differences
-among populations should be assessed [@AllendorfEtAl_2013]. 
-
-These issues have received renewed attention recently, in light of new
-approaches to assess the factors generally influencing range limits
-[@CrossEckert_2020]. There is a growing recognition of the need to
-distinguish between related spatial and ecological processes contributing
-to the distribution limits of species [@WilliVanBuskirk_2019;
-@Lee-YawEtAl_2018]. 
-
-Three key concepts are frequently treated as loosely interchangeable:
-geographic peripherality, geographic isolation, and ecological marginality.
-Indeed, one of the key contributions of @Brown_1984 was connecting work
-showing unimodal abundance distributions of organisms along ecological
-gradients [@Whittaker_1956], with biogeographic work showing a similar
-unimodal abundance distribution across the larger scale of the geographic
-range of a species [@Bystrak_1979]. The resulting theory proposed that
-observed patterns of declining abundance from the range center to the range
-margin could be explained by the assumed decline in ecological suitability
-(i.e., increasing marginality), and increase in geographic isolation,
-experienced by populations at the range edge (i.e., geographic
-peripherality).
-
-While this theory has motivated a great deal of research, empirical support
-is limited [@SagarinEtAl_2006, @EckertEtAl_2008]. Explaining this mismatch
-between theory and observation will require re-examining this assumption.
-It is therefore crucial to develop measures to quantify each of these three
-concepts in isolation, both to test their assumed relationship, and to
-determine their individual and combined influence of species abundance and
-genetic diversity. The increasing availability of high-resolution
-distribution and environmental data provides an opportunity to do this
-[@Lee-YawEtAl_2018, @WilliVanBuskirk_2019, @CrossEckert_2020].
+populations [@HoldereggerEtAl_2006; @TeixeiraHuber_2021]. Therefore, to
+capture variation in selection pressures across the species' range,
+environmental differences among populations should be assessed
+[@AllendorfEtAl_2013].
 
 *Trichophorum planifolium* (Sprengel) Palla, commonly known as Few-flowered
 Club-rush or Bashful Bulrush, is a species that is rare at its northern
@@ -168,46 +136,32 @@ since 2005 [@SmithRothfels_2007]. Due to its limited Canadian range and an
 apparent decline in population size, *T. planifolium* is listed as
 Endangered under the Canadian Species at Risk Act [SARA, @COSEWIC_2000]. 
 
-*Trichophorum planifolium* is wind-pollinated, possessing long exerted
-styles and stamens and posessing neither a showy perianth or nectaries
-[@Crins_1989; @IwanyckiEtAl_2010]. Seeds mature in mid-summer and disperse
-in late July to August [@IwanyckiEtAl_2010]. A mechanism for seed dispersal
-has not been confirmed [@SmithRothfels_2007], but it has been suggested
-that the matting of leaves and stems during the fruiting period may limit
-most seed dispersal to within a meter of the parent plants, leading to the
-formation of colonies of closely related sibling groups [@Crins_1989]. The
-species is caespitose, growing in dense, low tufts (~ 40 cm high).
-Individual plants reach a maximum diameter of 20-30 cm, and lack the long
-rhizomes present in clonally spreading sedges such as /Carex pensylvanica/
-Lamarck [@CrinsRettig_2002]. It has been suggested that low recruitment
-observed at the Hamilton site may be due to limited intrapopulational
-genetic diversity [@SmithRothfels_2007].
-
-The species is caespitose, growing in dense, low tufts (~ 40 cm high).
-Individual plants reach a maximum diameter of 20-30 cm, and lack the long
-rhizomes present in clonally spreading sedges such as /Carex pensylvanica/
-Lamarck [@CrinsRettig_2002]. It is wind-pollinated, possessing long exerted
-styles and stamens and lacking both a showy perianth and nectaries
-[@Crins_1989; @IwanyckiEtAl_2010]. Seeds mature in mid-summer and disperse
-in late July to August [@IwanyckiEtAl_2010]. A mechanism for seed dispersal
-has not been confirmed [@SmithRothfels_2007], but it has been suggested
-that the matting of leaves and stems during the fruiting period may limit
-most seed dispersal to within a meter of the parent plants, leading to the
-formation of colonies of closely related sibling groups [@Crins_1989]. It
-has been suggested that low recruitment observed at the Hamilton site may
-be due to limited intrapopulational genetic diversity
+*Trichophorum planifolium* is caespitose, growing in dense, low tufts (~ 40
+cm high). Individual plants reach a maximum diameter of 20-30 cm, and lack
+the long rhizomes present in clonally spreading sedges such as *Carex
+pensylvanica* Lamarck [@CrinsRettig_2002]. It is wind-pollinated, with
+styles and stamens exerted at anthesis, and has neither a showy perianth or
+nectaries [@Crins_1989; @IwanyckiEtAl_2010]. Seeds mature in mid-summer and
+disperse in late July to August [@IwanyckiEtAl_2010]. A mechanism for seed
+dispersal has not been confirmed [@SmithRothfels_2007], but it has been
+suggested that the matting of leaves and stems during the fruiting period
+may limit most seed dispersal to within a meter of the parent plants,
+leading to the formation of colonies of closely related sibling groups
+[@Crins_1989]. It has been suggested that low recruitment observed at the
+Hamilton site may be due to limited intrapopulational genetic diversity
 [@SmithRothfels_2007].
 
-The main objective of our research was to assess genetic variability within
-the Canadian population, and to quantify the relationship between the
-geographic and ecological distribution of populations, and their relative
-genetic diversity and divergence. Specifically, we address the questions:
-does genetic diversity decline along spatial or environmental gradients
-[@EckertEtAl_2008]; or does gene flow from the core of a species'
-distribution maintain comparative levels of genetic diversity across the
-range of the species [@KirkpatrickBarton_1997; @SextonEtAl_2016]? The
-results of our work provide crucial insight for ongoing conservation
-management of this endangered species.
+The main objective of our research was to apply Lesica and Allendorf's
+[-@LesicaAllendorf_1995] framework to assess the conservation value of the
+last remaining peripheral population of *Trichophorum planifolium* in
+Canada. Specifically, we assess genetic diversity (richness and divergence)
+using neutral microsatellite markers, to evalute the hypotheses that this
+peripheral population has reduced richness and increased divergence
+relative to central populations. Additionally, we assess variation in
+abiotic conditions (climate niche and local soil properties) and spatial
+isolation, to test the hypotheses that peripheral populations are subject
+to divergent environmental conditions and reduced connectivity to core
+populations.
 
 # MATERIALS AND METHODS
 ## Population Sampling
@@ -226,13 +180,17 @@ locations in Ontario, New Hampshire, and West Virginia, where the species
 is Endangered and collection of whole plants is prohibited. Vouchers have
 been deposited at DAO [abbreviations follow @Thiers_2020].
 
-```{R distmap, fig.width = 7.25, fig.height = 3.5, dev = 'jpeg', fig.show = 'hold', dpi = 200, echo = FALSE, fig.cap = "*Trichophorum planifolium* distribution. A. Populations Sampled: Grey points are GBIF records used to generate the species distribution model and geographic isolation and marginality indices. Red diamonds are populations sampled for the genetic survey. B. Maxent species distribution model. Highest suitability is indicated in green, declining through yellow, orange and grey."}
+Tissue samples were immediately placed on silica gel and stored
+at room temperature prior to molecular analysis. A random subsample of 20
+samples per population were selected for genetic analysis. For populations
+with fewer than 20 samples, all individuals were used.
+
+```{R distmap, fig.width = 7.25, fig.height = 3.5, dev = 'jpeg', fig.show = 'hold', dpi = 200, echo = FALSE, fig.cap = "*Trichophorum planifolium* distribution. A. Populations Sampled: Grey points are GBIF records; red diamonds are populations sampled for the genetic survey and soil analysis. B. Maxent species distribution model. Highest suitability is indicated in green, declining through yellow, orange and grey."}
 par(mar = c(0.1,0.1,0.1,0), mfrow = c(1, 2))
 
-plot(ca.proj, xlim = c(zm@xmin, zm@xmax),
+plot(st_geometry(na.simp), xlim = c(zm@xmin, zm@xmax),
      ylim = c(zm@ymin, zm@ymax), border = "grey",
-     bg = "lightblue", col = "white")  
-plot(us.proj, add = TRUE, border = "grey", col = "white")
+     bgc = "lightblue", col = "white")  
 plot(gl.proj, add = TRUE, border = "grey", col = "lightblue")
 points(trich.proj, pch = 16, col = "grey30", cex = 0.7)
 points(samples.proj, cex = 1, pch = 23, bg = 'red')
@@ -243,13 +201,10 @@ text("A", x = grconvertX(0.1, from="npc", to="user"),
 
 par(mar = c(0.1,0,0.1,0.1))
 
-plot(ca.proj, xlim = c(zm@xmin, zm@xmax),
+plot(st_geometry(na.simp), xlim = c(zm@xmin, zm@xmax),
      ylim = c(zm@ymin, zm@ymax), border = "grey",
-     bg = "lightblue", col = "white")  
-plot(us.proj, add = TRUE, border = "grey", col = "white")
+     bgc = "lightblue", col = "white")  
 plot(predTR, add = TRUE, legend = FALSE)
-plot(ca.proj, add = TRUE, border = "grey")
-plot(us.proj, add = TRUE, border = "grey")
 plot(gl.proj, add = TRUE, border = "grey", col = "lightblue")
 box()
 
@@ -258,6 +213,17 @@ text("B", x = grconvertX(0.1, from="npc", to="user"),
 
 ```
 
+
+(ref:table1cap) *Trichophorum planifolium* populations sampled. Population:
+the population code, the first two letters indicate the US state or
+Canadian province. Lat and Lon: geographic coordinates. N: total samples
+per population (samples with all 11 loci scored in parentheses). Ap:
+private alleles. Ar: mean allelic richness per locus. MLG: multilocus
+genotypes. eMLG: multilocus genotypes in rarefied samples of 10
+individuals. Hs: gene diversity. Ho: observed heterozygosity. F~IS~:
+population inbreeding coefficient. F~D~ : mean pairwise F~ST~ for the
+population when compared to all other populations. The value in the Total
+row for the F~D~ column is the global F~ST~ value.
 
 ```{R sumtab, results = 'asis', echo = FALSE}
 sumTable <- as.data.frame(samples)
@@ -287,17 +253,12 @@ sumTable %>%
          Hs = round(Hs, 2),
          Fis = round(Fis, 2)
          ) %>%
-  select(population, Latitude, Longitude,
+  dplyr::select(population, Latitude, Longitude,
          N, Ap, Ar, mlg, emlg, Hs, Ho, Fis, Fst) %>%
-  kable(caption = "*Trichophorum planifolium* populations sampled. Population: the population code, the first two letters indicate the US state or Canadian province. Lat and Lon: geographic coordinates. N: total samples per population (samples with all 11 loci scored in parentheses). Ap: private alleles. Ar: mean allelic richness per locus. MLG: multilocus genotypes. eMLG: multilocus genotypes in rarefied samples of 10 individuals. Hs: gene diversity. Ho: observed heterozygosity. F IS : population inbreeding coefficient. F D : mean pairwise F ST for the population when compared to all other populations. The value in the Total row for the FD column is the global Fst value.")
+  kable(caption = '(ref:table1cap)')
 ```
 
 ## Genetic Analysis
-
-After collection, samples were immediately placed on silica gel and stored
-at room temperature prior to molecular analysis. A random subsample of 20
-samples per population were selected for genetic analysis. For populations
-with fewer than 20 samples, all individuals were used.
 
 For each individual, 20 mg of dried leaf tissue was ground with 3
 mm-diameter stainless steel beads in a 2 mL Eppendorf tube at 30 Hz for 2
@@ -355,21 +316,21 @@ mean of pairwise-F~ST~ values for a given population, when compared with
 all other populations.
 
 Preliminary review of the data revealed excessive levels of homozygosity,
-and no locus was in Hardy-Weinburg equilibrium. As discussed below, this
-indicates high levels of selfing and/or inbreeding among close relatives.
-As such, analyses based on assumptions of Hardy-Weinburg equilibrium,
-linkage equilibrium and panmictic populations, such as STRUCTURE
-[@PritchardEtAl_2000], are inappropriate for our data. Accordingly, we used
-multivariate ordinations to visualize genetic structure among populations
-[@JombartEtAl_2008]. Similarly, we did not test for the presence of null
-alleles, as we are not aware of a test that can distinguish between
-excessive homozygosity due to the presence of null alleles, and excessive
-homozygosity to due to high levels of inbreeding [e.g., @Brookfield_1996].
-
-## Geographic and Ecological Analysis
+and no locus was in Hardy-Weinburg equilibrium. Five populations had a
+single MLG shared by all individuals and no heterozygosity (Table
+\@ref(tab:sumtab)). As discussed below, this indicates high levels of
+selfing and/or inbreeding among close relatives. As such, analyses based on
+assumptions of Hardy-Weinburg equilibrium, linkage equilibrium and
+panmictic populations, such as STRUCTURE [@PritchardEtAl_2000], are
+inappropriate for our data. Accordingly, we used multivariate ordinations
+to visualize genetic structure among populations [@JombartEtAl_2008].
+Similarly, we did not test for the presence of null alleles, as we are not
+aware of a test that can distinguish between excessive homozygosity due to
+the presence of null alleles, and excessive homozygosity to due to high
+levels of inbreeding [e.g., @Brookfield_1996].
 
 We assessed spatial structure using spatial Principal Components Analysis
-[i.e., sPCA; @JombartEtAl_2008; @ThioulouseEtAl_2018]. We defined the
+[i.e., sPCA: @JombartEtAl_2008; @ThioulouseEtAl_2018]. We defined the
 spatial neighbourhood of a sample as all other samples within 650 km, with
 the strength of each link weighted inversely by distance (via function
 `spdep::dnearneigh` with the upper distance bound set to 650). We chose 650
@@ -378,65 +339,75 @@ one link between the Missouri populations and the eastern populations). We
 tested for statistically significant spatial autocorrelation using a
 randomization test (function `global.rtest` in R package `adegenet`).
 
-Additionally, we used eMLG and F~D~ to assess the relationship between
-genetic diversity and three indexes representing geographic and ecological
-distribution: Isolation (the distance between a population and its nearest
-neighbours), Peripherality (the relative spatial location of a population
-relative to the core distribution of the species), and Suitability (the
-relative ecological suitability of a population's location). 
+## Soil Sampling and Analysis
 
-We generated all three of these indices using specimen records downloaded
-from @GBIF.org_2019 to characterize the geographic distribution of *T.
-planifolium*. To control for collection bias [see
-@RadosavljevicAnderson_2014], we used the `spThin` package
-[@Aiello-LammensEtAl_2015] to create a thinned data set, in which retained
-samples were at least 10 km from all other samples.
+Soil samples, composed of at least 7 sub-samples, were collected at each
+population (except WVMO and VASC, where the substrate was too rocky for
+soil collection, and KYLE, for which tissue samples were collected several
+years prior to the development of sampling design implemented here), with
+sub-samples made to rooting depth (~10 cm) immediately adjacent to *T.
+planifolium* plants. Composite samples were submitted to the University of
+Massachusetts Soil Laboratory (American Samples) or the University of
+Guelph Soil Laboratory (the Canadian sample), and soil properties including
+pH, cation exchange capacity (CEC), organic matter (OM) and soil nutrients
+(Calcium, Magnesium, Manganese, Phosphorous, Potassium, Zinc) were
+quantified.
 
-We calculated the isolation index as the mean geographic distance between a
-sampled population and its five nearest neighbours in the thinned GBIF data
-set. We decided to use five nearest neighbours, rather than the single
-nearest neighbour, as this would score isolated clusters of 2-4 populations
-as having greater isolation than a similar sized clusters that occur in
-close proximity to other populations.
+We used hierarchical clustering to visualize differences in soil
+conditions. Each variable was scaled to mean = 0, standard deviation = 1,
+and the Euclidean distance among sites was used to construct UPGMA cluster
+dendrograms [@LegendreLegendre_2012]. We validated the dendrogram structure
+using the cophenetic correlation coefficient, and identified the optimal
+number of clusters using the Kelley-Gardner-Sutcliffe penalty function
+[@KelleyEtAl_1996].
 
-We calculated the peripherality index as the Mahalanobis distance between
-each sample and the centroid of the GBIF data. We used the Mahalanobis
-distance, rather than the Euclidean distance, as the former accounts for
-the density & distribution (variance and covariance) of points, as well as
-their absolute distances [@LegendreLegendre_1998; see @Lee-YawEtAl_2018 for
-a similar approach].
+## Geographic and Ecological Analysis
 
-The suitability index was generated using a Maxent distribution model
-[@PhillipsEtAl_2017]. We limited the study extent to 31N-50N degrees
-latitude, 66W-98W degrees longitude; this area was chosen to include a 500
-km buffer around a minimum convex polygon containing all GBIF records for
-*T. planifolium*. Background training data was limited to level 1
-Ecoregions [@OmernikGriffith_2014] in which *T. planifolium* is present
-within this extent. The following environmental layers were considered: 19
-bioclimatic variables [WorldClim: @FickHijmans_2017, www.worldclim.org],
-aridity [@TrabuccoZomer_2019], and terrain ruggedness. Terrain ruggedness
-was calculated from SRTM DEM data [@JarvisEtAl_2008] with 3-arc second
-(approximately 90m) horizontal resolution. We used the Terrain Ruggedness
-Index in QGIS [@QGIS.org_2020]. The resulting raster was upscaled to match
-the 30 arc-second (~1km) resolution of the other layers, using the
-"average" resampling method. To reduce collinearity among variables, We
-selected a subset of these layers such that the variance inflation factor
-was less than 10 [function `vif` in the R package `usdm`: @NaimiEtAl_2014].
-The final set of variables included aridity, WorldClim Bio2 (mean diurnal
-temperature range), Bio6 (minimum temperature of coldest month), Bio13
-(precipitation of wettest month), and Terrain Ruggedness. Maxent model
-parameters were tuned with the ~ENMevaluate~ function from the package
-~ENMeval~ [@MuscarellaEtAl_2014].
+We used herbarium records from @GBIF.org_2019 to characterize the
+geographic isolation and climatic distribution of *T. planifolium*. To
+control for collection bias [see @RadosavljevicAnderson_2014], we used the
+`spThin` package [@Aiello-LammensEtAl_2015] to create a thinned data set,
+in which retained samples were at least 10 km from all other samples.
 
-We tested the relationships between genetic diversity (eMLG) and genetic
-divergence (F~D~), and Isolation, Peripherality, and Suitability using
-linear regression. The index values were log-transformed to improve
-normality.
+We quantified the isolation of each occurence in the thinned GBIF data as
+the fitted value of a kernel density smoother fit to those data, the
+"Utilization Distribution" of @Worton_1989, and implemented in the R
+package `adehabitat` [@Calenge_2006]. This approach incorporates both
+distance and density of occurences near a point, with low values (near
+zero) assigned to isolated points, and increasing values for points with
+more & closer neighbours. There is no upper bound to this value, but
+records used in our study had values from 0.007 (most isolated) to 0.113
+(least isolated; see results).
+
+To quantify climate suitability for observations, we constructed a Species
+Distribution Model (SDM) using a Maxent [@PhillipsEtAl_2017]. We limited
+the study extent to 31N-50N degrees latitude, 66W-98W degrees longitude;
+this area was chosen to include a 500 km buffer around a minimum convex
+polygon containing all GBIF records for *T. planifolium*. Background
+training data was limited to level 1 Ecoregions [@OmernikGriffith_2014] in
+which *T. planifolium* is present within this extent. The following
+environmental layers were considered: 19 bioclimatic variables [WorldClim:
+@FickHijmans_2017, www.worldclim.org], aridity [@TrabuccoZomer_2019], and
+terrain ruggedness. Terrain ruggedness was calculated from SRTM DEM data
+[@JarvisEtAl_2008] with 3-arc second (approximately 90m) horizontal
+resolution. We used the Terrain Ruggedness Index in QGIS [@QGIS.org_2020].
+The resulting raster was upscaled to match the 30 arc-second (~1km)
+resolution of the other layers, using the "average" resampling method. To
+reduce collinearity among variables, We selected a subset of these layers
+such that the variance inflation factor was less than 10 [function `vif` in
+the R package `usdm`: @NaimiEtAl_2014]. The final set of variables included
+aridity, WorldClim Bio2 (mean diurnal temperature range), Bio6 (minimum
+temperature of coldest month), Bio13 (precipitation of wettest month), and
+Terrain Ruggedness. Maxent model parameters were tuned with the
+`ENMevaluate` function from the package `ENMeval` [@MuscarellaEtAl_2014].
+We used the fitted cumulative log-log values from the SDM as an index of
+climate suitability for each record.
 
 All analyses were performed in R version 4.0 [@RCoreTeam_2020], unless
 otherwise specified.
 
 # RESULTS
+## Genetics
 We scored a total of 505 individual genotypes (mean 16.8 per population)
 for at least 8 loci, and completed all 11 loci for 408 individuals (Table
 \@ref(tab:sumtab)). 46 alleles were detected (mean 4.2 per locus, range
@@ -450,50 +421,23 @@ Connecticut, Maryland, and eastern New York.
 individuals heterozygous at one or more loci. Of the 25 populations with at
 least 10 individuals genotyped, the mean eMLG (i.e., genotypes per 10
 individuals) was 3.1 (range 1--6.5, Figure \@ref(fig:sumplots)). The
-Ontario population had an eMLG of 1.37, corresponding to the 20th
+Canadian population had an eMLG of 1.37, corresponding to the 20th
 percentile of the distribution. 
 
-The pair-wise F~ST~ values ranged from 0 to 1 (mean 0.79, Figure
-\@ref(fig:fstplots)). A group of five populations shared mutual
-pairwise-F~ST~ values of exactly 1: CTTP, MAST, OHBH, OHSC, VAHB. This is a
-consequence of each of these populations being fixed for a different
-homozygous MLG. Populations OHBH and OHPR had a pairwise F~ST~ of -0.01
-[corrected for heterozygosity, @GoudetJombart_2015], as a consequence of
-the single MLG present in OHBH (all 13 samples), also occuring in 16 of 18
-samples from OHPR.
+The pair-wise F~ST~ values ranged from 0 to 1 (mean 0.79). A group of five
+populations shared mutual pairwise-F~ST~ values of exactly 1: CTTP, MAST,
+OHBH, OHSC, VAHB. This is a consequence of each of these populations being
+fixed for a different homozygous MLG. Ohio populations OHBH and OHPR had a
+pairwise F~ST~ of -0.01 [corrected for heterozygosity,
+@GoudetJombart_2015], as a consequence of the single MLG present in OHBH
+(all 13 samples), also occuring in 16 of 18 samples from OHPR.
 
-The mean F~D~ was 0.79 (range 0.59--0.9, Figure \@ref(fig:fstplots)). F~D~
-for the Ontario population was 0.87, corresponding to the 80th percentile
-of the distribution. The least divergent populations (in increasing order)
-were MOBU, WVFM, NYTS, NHER and PAGP (F~D~ = 0.60 -- 0.68). The most
-divergent populations (in decreasing order) were NYMP, VAHB, MAST, CTTP,
-OHSC, ONRB (F~ST~ 0.87--0.9).
-
-```{R fstplots, fig.width = 6, fig.height = 3, dev = 'jpeg', dpi = 200, echo = FALSE, fig.show = "hold", fig.cap = "Distribution of pair-wise Fst values and population mean pair-wise Fst values (F_D). The red line indicates the population in Ontario, Canada."}
-dev.new(height = 3.5, width = 7)
-
-par(mfrow = c(1, 2))
-par(mar = c(3.5, 3.5, 0.5, 0.5))
-hist(trichFst, breaks = 12, main = "", xlab = "", ylab = "",
-     axes = FALSE) 
-#abline(v = data.frame(samples)["ONRB", "emlg"], col = 2, lwd = 4)
-
-axis(side = 2, cex.axis = 0.7, tcl = -0.33, padj = 0.75)
-mtext(side = 2, line = 2, "Frequency")
-axis(side = 1, cex.axis = 0.7, tcl = -0.33, padj = -0.75)
-mtext(side = 1, line = 2, expression('Pair-wise F'[ST]))
-
-par(mar = c(3.5, 1.5, 0.5, 0.5))
-hist(samples$meanFst, breaks = 12, main = "", xlab = "",
-     ylab = "", axes = FALSE)
-abline(v = data.frame(samples)["ONRB", "meanFst"], col = 2, lwd = 4)
-
-axis(side = 2, cex.axis = 0.7, tcl = -0.33, padj = 0.75)
-axis(side = 1, cex.axis = 0.7, tcl = -0.33, padj = -0.75)
-mtext(side = 1, line = 2, text = expression('F'[D]))
-
-```
-
+The mean genetic divergence, F~D~, was 0.79 (range 0.59--0.9, Figure
+\@ref(fig:sumplots)). F~D~ for the Ontario population was 0.87,
+corresponding to the 80th percentile of the distribution. The least
+divergent populations (in increasing order) were MOBU, WVFM, NYTS, NHER and
+PAGP (F~D~ = 0.60 -- 0.68). The most divergent populations (in decreasing
+order) were NYMP, VAHB, MAST, CTTP, OHSC, ONRB (F~ST~ 0.87--0.9).
 
 ```{R sumplots, fig.width = 6, fig.height = 3, dev = 'jpeg', dpi = 200, echo = FALSE, fig.show = "hold", fig.cap = "Distribution of rarified multi-locus genotypes (eMLG) and population mean pair-wise Fst values (F_D). The red line indicates the population in Ontario, Canada."}
 #dev.new(height = 3.5, width = 7)
@@ -522,45 +466,223 @@ mtext(side = 1, line = 2, text = expression('F'[D]))
 
 There was significant spatial structure in the genetic data, as determined
 by a Monte Carlo test of Morin's I (function `adespatial::global.rtest`, p
-< 0.001). Plotting the first axis of the sPCA on a geographic map reveals
-this structure is largely due to divergence of the Missouri populations
-from the eastern locations (Figure \@ref(fig:sPCAmap)). However, the
-Ontario population and one of the Ohio populations are genetically more
-similar to the Missouri populations than to their nearer neighbours.
+< 0.001). This is largely due to the relative divergence of the Missouri
+populations (Figure \@ref(fig:PCoA)). On the PCoA plot, the Missouri
+samples form a discrete grouping on the left side; the single Maryland
+population is somewhat separated in the upper right corner, and the Ontario
+samples cluster with the Missouri grouping on the lower left. The other
+populations are intermixed in the center of the plot. A similar pattern is
+shown in the sPCA map, which shows the Missouri samples have low values on
+sPCA axis 1, compared to higher values for the eastern populations. The
+populations in Ohio, in the center of the geographic range show a mix of
+'eastern' and 'western' affinities.
 
-```{R sPCAmap, fig.width = 6, fig.height = 3.5, dev = 'jpeg', dpi = 200, echo = FALSE, fig.show = "hold", fig.cap = "*Trichophorum planifolium* sPCA. Colour and size of points indicate the position of each population on sPCA axis 1: size indicates absolute distance from the origin, and colour indicates positive or negative values. i.e., large black squares have large negative values, large white values have large positive PCA values, with smaller squares indicating lower absolute values."}
-##dev.new(height = 5, width = 7)
-par(mar = c(0.1,0.1,0.1,0.1))
+```{R PCoA, fig.width = 7, fig.height = 4, dev = 'jpeg', dpi = 200, echo = FALSE, fig.show = "hold", fig.cap = "Spatial Structure of Genetic Diversity in *Trichophorum planifolium*. Left: Principal Coordinates Analysis of 97 unique microsatellite MLGs. The centroid of all samples from each state or province are labelled, connected to each of the unique MLGs for that jurisdiction. The strongest geographic structure is the clustering of Missouri samples on the left (MO, green squares), Maryland on the right (MD, red circles) and Ontario at the lower left (ON, blue diamonds). Right. sPCA map. The color for each population indicates its position along the first axis of the sPCA ordination."}
+#dev.new(height = 4, width = 7)
 
-###axcol <- 2 * (trich.spca1$li[, 1] - min(trich.spca1$li[, 1])) + 1
-###axcol <- axcol/min(axcol)
-###axcol  <- axcol < 0.5
-
-med <- mean(range(trich.spca1$li[,1]))
-axex <- trich.spca1$li[,1] - med
-axex <- abs(axex)
-axex <- 4 * (axex + 0.25)
-axcol <- trich.spca1$li[, 1] < med
-
-plot(ca.proj, xlim = c(zm@xmin, zm@xmax),
-     ylim = c(zm@ymin, zm@ymax), border = "grey",
-     bg = "lightblue", col = "grey95")  
-plot(us.proj, add = TRUE, border = "grey", col = "gray95")
-plot(gl.proj, add = TRUE, border = "grey", col = "lightblue")
-##points(samples.proj, cex = axex, pch = 22, bg = grey(axcol/max(axcol)),
-##       col = "grey")
-points(samples.proj, cex = axex, pch = 22,
-       bg = c("black", "white")[axcol+1], col = "darkgrey")
-
+par(mfrow = c(1, 2))
+par(mar = c(3, 3, 0.5, 0.1))
+plot(scores(clonePCoA)[, c(1,2)], type = 'n',
+     asp = 1, axes = FALSE, xlab = NA, ylab = NA)
+statesSpider <- unique(unclass(ordispider(clonePCoA, groups = myStates,
+                                         col = "grey")))
+points(scores(clonePCoA)[, c(1,2)], pch = c(21:24)[myPops],
+     asp = 1, bg = c(2:4, "grey")[myPops],
+     col = c(1, 1, 1, 0)[myPops],
+     cex = c(1.5, 1.5, 1.5, 1)[myPops])
+text(statesSpider, cex = 1,
+     labels = substr(row.names(statesSpider), 0, 2))
+axis(1, cex.axis = 0.75, tcl = -0.2, line = 0, mgp = c(3, 0.3, 0),
+     col.axis = "grey30", at = c(-1, 0, 1))
+axis(2, cex.axis = 0.75, tcl = -0.2, line = 0, mgp = c(3, 0.3, 0),
+     las = 1, col.axis = "grey30", at = c(-1, 0, 1))
+mtext(side = 1, line = 1.25, cex = 0.9,
+      text = paste("PCA Axis 1, ", eigVals[1], "% of Total Variance",
+            sep = ""))
+mtext(side = 2, line = 1.25,, cex = 0.9,
+      text = paste("PCA Axis 2, ", eigVals[2], "% of Total Variance",
+            sep = ""))
 box()
+
+par(mar = c(3, 2, 0.5, 0.5))
+
+axcol <- trich.spca1$li[, 1] - min(trich.spca1$li[, 1])
+axcol <- viridis(100)[round(axcol/max(axcol) * 100)]
+
+plot(st_geometry(na.simp), xlim = c(zm@xmin, zm@xmax),
+     ylim = c(zm@ymin, zm@ymax),
+     border = "grey", axes = TRUE,
+     graticule = st_crs(us),
+     bgc = "lightblue", col = "white",
+     lat = c(30, 45), lon = c(-75, -90),
+     mgp = c(3, 0.5, 0), 
+     tcl = -0.2, cex.axis = 0.75, col.axis = "grey30")  #"gray95"
+plot(gl.proj, add = TRUE, border = "grey", col = "lightblue")
+points(samples.proj, pch = 22, bg = axcol, col = "grey",
+       cex = 3)
+rect(xleft = grconvertX(seq(0.70, 0.95, length.out = 100),
+                        from="npc", to="user"), 
+     xright = grconvertX(seq(0.7025, 0.9525, 
+                             length.out = 100),
+                         from="npc", to="user"),
+     ytop = grconvertY(0.1, from="npc", to="user"),
+     ybottom = grconvertY(0.05, from="npc", to="user"),
+     col = viridis(100), border = NA)
+text(y = grconvertY(0.125, from = "npc", to = "user"),
+     x = grconvertX(0.97, from = "npc", to = "user"),
+     "sPCA Axis 1", pos = 2, cex = 0.75)
+
 ```
 
-We found no evidence supporting a relationship between genetic diversity or
-genetic divergence and geographic location (isolation or peripherality) or
-ecological condition (suitability; Table \@ref(tab:regression)).
+## Soils
+
+The cophenetic correlation of the UPGMA clustering of soil data was 0.94,
+indicating strong correspondance between the dendrogram structure and the
+original distance values. The optimal number of clusters identified by the
+Kelley-Gardner-Sutcliffe test was four (Figure \@ref(fig:soil-plots)). 22
+of 27 assessed populations belonged to the main cluster, with three
+outlying clusters containing one or two populations each. The Maryland
+population MDDM formed a cluster on its own, characterized by low pH, high
+organic matter, and high values of P, K, and Mn. Populations MABM and PAGP
+formed a cluster, characterized by high Ca and Mg. Populations ONRB and
+PACR formed the fourth cluster, characterized by high Ca and Zn and low Mn
+(Table \@ref(tab:soil-table)).
+
+```{R soil-plots, fig.height = 4, fig.width = 7, fig.cap = "Soil Analysis of *T. planifolium* populations. Left: UPGMA dendrogram, based on 9 soil variables. The four clusters identified by the Kelley-Gardner-Sutcliffe test are indicated. Right: Geographic distribution of soil clusters. The plot symbols on the map indicate the soil cluster from the dendrogram; empty circles are populations without soil data.", echo = FALSE}
+#dev.new(height = 4, width = 7)
+par(mfrow = c(1, 2))
+par(mar = c(3, 2, 1, 1))
+soilDend <- as.dendrogram(soilClust)
+labels_cex(soilDend) <- 0.65
+soilDend <- color_labels(soilDend, k = 4)
+plot(soilDend, axes = FALSE)
+axis(side = 2, cex.axis = 0.65, at = c(0, 4, 8), las = 1,
+     hadj = -1, tcl = -0.25, )
+mtext(side = 2, "Distance", cex = 0.75, line = 1)
+rect.dendrogram(soilDend, k = 4, border = 8,
+                lty = 5, lwd = 1)
+
+par(xpd = TRUE)
+points(x = 14, y = -1.75, pch = 21, col = 'darkgrey',
+       bg = "#767F00", cex = 1.5)
+points(x = 24.5, y = -1.75, pch = 22, col = "darkgrey",
+       bg = "#009681", cex = 1.5) 
+points(x = 1, y = -1.75, pch = 23, col = "darkgrey",
+       bg = "#CC476B", cex = 1.5)
+points(x = 26.5, y = -1.75, pch = 24, col = "darkgrey",
+       bg = "#7866D8", cex = 1.5)
+## NB: colors come from rainbow_hcl(n = 4, c = 90, l = 50),
+## built-in to color_labels
+
+par(xpd = FALSE)
+par(mar = c(0, 0, 0, 0))
+plot(st_geometry(na.simp), xlim = c(zm@xmin, zm@xmax),
+     ylim = c(zm@ymin, zm@ymax),
+     border = "grey", axes = TRUE,
+     graticule = st_crs(us),
+     bgc = "lightblue", col = "white",
+     lat = c(30, 45), lon = c(-75, -90),
+     mgp = c(3, 0.5, 0), 
+     tcl = 0, cex.axis = 0.75, col.axis = "white")  #"gray95"
+plot(gl.proj, add = TRUE, border = "grey", col = "lightblue")
+
+## Adding points separately to control which points are on top
+points(samples.proj[c("KY", "WVMO", "VASC"), ], pch = 1, col = 'black', cex = 1.5)
+points(samples.proj[names(soilCut)[soilCut == 1], ],
+       pch = 21, col = 'darkgrey', bg = "#767F00", cex = 1.5)
+points(samples.proj[names(soilCut)[soilCut == 2], ],
+       pch = 22, col = "darkgrey", bg = "#009681", cex = 1.75)
+points(samples.proj[names(soilCut)[soilCut == 4], ],
+       pch = 24, col = "darkgrey", bg = "#7866D8", cex = 1.5)
+points(samples.proj[names(soilCut)[soilCut == 3], ],
+       pch = 23, col = "darkgrey", bg = "#CC476B", cex = 1.5)
+
+```
+
+```{R soil-table, echo = FALSE, eval = TRUE}
+soilData %>% group_by(group) %>%
+  summarize(across(.fns = list(mean = mean, sd = sd))) %>%
+  t %>% round(1) ->soilTable
+soilTable <- soilTable[-1, c(1, 2, 4, 3)]
+tableVals <- matrix(character(), ncol = 4)
+colnames(tableVals) <- c("Main", "MABM & PAGP", "ONRB & PACR", "MDDM")
+for(var in soilCols){
+  MEANS <-
+    soilTable[paste(var, "_mean", sep = ""), ] %>%
+    sprintf("%.1f", .)
+  SDS <-
+    soilTable[paste(var, "_sd", sep = ""), ] %>%
+    sprintf("%.1f", .)
+  rowNs <- rownames(tableVals)
+  tableVals <- rbind(tableVals, paste(MEANS, SDS,
+                                     sep = " ± "))
+  rownames(tableVals) <- c(rowNs, var)
+}
+tableVals[, "MDDM"] <- gsub(" ± NA", "", tableVals[, "MDDM"])
+
+tableVals <- tableVals[c("CEC", "OM", "pH", "Ca", "K", "Mg",
+                        "Mn", "P", "Zn"), ]
+rownames(tableVals) <- c("CEC (meq/100g)", "OM (%)", "pH",
+                        "Ca (ppm)", "K (ppm)", "Mg (ppm)",
+                        "Mn (ppm)", "P (ppm)", "Zn (ppm)")
+
+kable(tableVals, caption = '(ref:soilTableCap)')
+
+```
+
+(ref:soilTableCap) Soil analysis for *T. planifolium* populations. Values reported as mean ± standard deviation for each cluster. Note: the MDDM cluster had only one population, so there is no standard deviation to report.
+
+## Geographic Isolation and Climate Suitability 
+
+Population isolation for the herbarium records ranged from 0.00716 to 0.113
+(lower values indicate greater isolation) (Figure \@ref(fig:isolation)).
+The Canadian population had an isolation index of 0.00718, putting it in
+the 1st percentile of the 266 records. Climate suitability for each of the
+herbarium records ranged from 1.9e-5 to 4.5e-3; suitability at the Ontario
+population scored 3.6e-4, the 30th percentile of the total distribution
+(Figures \@ref(fig:distmap) and \@ref(fig:isolation)).
+
+(ref:isolationLabel) Geographic Isolation and Climate Suitability of *T.
+planifolium* records. Population Isolation based on the density of
+occurences around each GBIF record using the Utilization Distribution;
+Climate Suitability presents the fitted values for each record from a
+Maxent distribution model. Red lines indicate the values for the last
+remaining Canadian population.
+
+```{R isolation, echo = FALSE, fig.cap = '(ref:isolationLabel)', fig.height = 3, fig.width = 6}
+#dev.new(height = 3, width = 6)
+jpeg(file = "isolation.jpg", width = 6, height = 3,
+     units = "in", res = 600)
+par(mfrow = c(1, 2))
+par(mar = c(3.5, 3.5, 0.5, 0.5))
+hist(gbifthin$kernel, xlab = "",
+     main = "", ylab = "", axes = FALSE)
+abline(v = data.frame(samples["ONRB", ])["kernel"], col = 2,
+       lwd = 2)
+
+axis(side = 2, cex.axis = 0.7, tcl = -0.33, padj = 0.75)
+mtext(side = 2, line = 2, "Frequency")
+axis(side = 1, cex.axis = 0.7, tcl = -0.33, padj = -0.75)
+mtext(side = 1, line = 2, "Population Isolation")
+
+par(mar = c(3.5, 1.5, 0.5, 0.5))
+
+hist(gbifthin$suitability, xlab = "", ylab = "", main = "",
+     axes = FALSE)
+abline(v = data.frame(samples["ONRB", ])["LQH_2"], col = 2,
+       lwd = 2)
+
+axis(side = 2, cex.axis = 0.7, tcl = -0.33, padj = 0.75)
+axis(side = 1, cex.axis = 0.7, tcl = -0.33, padj = -0.75)
+mtext(side = 1, line = 2, text = "Climate Suitability")
+
+dev.off()
+
+```
 
 
-```{R regression, echo = FALSE}
+
+```{R regression, echo = FALSE, eval = FALSE}
 lmp <- function (modelobject) {
   if (class(modelobject) != "lm") stop("Not an object of class 'lm' ")
   f <- summary(modelobject)$fstatistic
@@ -612,39 +734,40 @@ kable(lms,
 ```
 
 # DISCUSSION
-We found no evidence to support the hypothesis that genetic diversity
-declines with geographic peripherality, ecological marginality, or spatial
-isolation. However, the highly structured populations (i.e., global F_ST =
-0.8) and significant east-west spatial structure suggest that this lack of
-pattern is not due to 'swamping' gene flow from the core of the
-distribution homogenizing genetic diversity in peripheral populations. If
-that were the case, we would expect to see lower among-population variation
-(F_ST), and relatively higher within-population variation (F_IS).
+<!-- We found no evidence to support the hypothesis that genetic diversity -->
+<!-- declines with geographic peripherality, ecological marginality, or spatial -->
+<!-- isolation. However, the highly structured populations (i.e., global F_ST = -->
+<!-- 0.8) and significant east-west spatial structure suggest that this lack of -->
+<!-- pattern is not due to 'swamping' gene flow from the core of the -->
+<!-- distribution homogenizing genetic diversity in peripheral populations. If -->
+<!-- that were the case, we would expect to see lower among-population variation -->
+<!-- (F_ST), and relatively higher within-population variation (F_IS). -->
 
-This contrasts with other recent studies that have found significant
-relationships between genetic diversity and spatial or environmental
-gradients [@SextonEtAl_2016; @Lee-YawEtAl_2018]. Differences in life
-history and reproductive biology may explain the difference.
-@Lee-YawEtAl_2018 found that genetic diversity declined towards the
-geographic range limits of *Arabidopsis lyrata* ssp. *lyrata*, and also
-with distance from the species' environmental niche. In addition, their
-data shows that environmental conditions declined towards the range
-periphery. This supports the abundant center hypothesis [@Brown_1984]. 
+<!-- This contrasts with other recent studies that have found significant -->
+<!-- relationships between genetic diversity and spatial or environmental -->
+<!-- gradients [@SextonEtAl_2016; @Lee-YawEtAl_2018]. Differences in life -->
+<!-- history and reproductive biology may explain the difference. -->
+<!-- @Lee-YawEtAl_2018 found that genetic diversity declined towards the -->
+<!-- geographic range limits of *Arabidopsis lyrata* ssp. *lyrata*, and also -->
+<!-- with distance from the species' environmental niche. In addition, their -->
+<!-- data shows that environmental conditions declined towards the range -->
+<!-- periphery. This supports the abundant center hypothesis [@Brown_1984].  -->
 
-On the other hand, @SextonEtAl_2016 found no relationship between genetic
-diversity and spatial structure in *Mimulus laciniatus*. Instead, their
-work documented Isolation by Environment [@SextonEtAl_2014], where genetic
-diversity is structured along environmental gradients, presumably a
-consequence of natural selection or non-random mating.
+<!-- On the other hand, @SextonEtAl_2016 found no relationship between genetic -->
+<!-- diversity and spatial structure in *Mimulus laciniatus*. Instead, their -->
+<!-- work documented Isolation by Environment [@SextonEtAl_2014], where genetic -->
+<!-- diversity is structured along environmental gradients, presumably a -->
+<!-- consequence of natural selection or non-random mating. -->
 
-Neither pattern appears in our data. The most striking observation in our
-study is the extremely low variation present within populations (mean FIS
-0.91, 1% heterozygosity), and high level of differentiation among
-populations (Fst = 0.80). *Trichophorum planifolium* is apparently a
-wind-pollinated, outcrossing species, but these values are higher even than
-typical for selfing species [i.e., the mean Fst for selfing species with
-similar life history traits is 0.4--0.57, following @HamrickGodt_1996;
-@Nybom_2004].
+<!-- Neither pattern appears in our data.  -->
+
+The most striking observation in our study is the extremely low variation
+present within populations (mean F~IS~ 0.91, 1% heterozygosity), and high
+level of differentiation among populations (F~ST~ = 0.80). *Trichophorum
+planifolium* is apparently a wind-pollinated, outcrossing species, but
+these values are higher even than typical for selfing species [i.e., the
+mean F~ST~ for selfing species with similar life history traits is
+0.4--0.57, following @HamrickGodt_1996; @Nybom_2004].
 
 This supports Crins' [-@Crins_1989] hypothesis that the low stature of *T.
 planifolium*, and the complex terrain it occupies, limits outcrossing.
@@ -696,32 +819,31 @@ Ho = 0.01 to 0.04 [@GodtEtAl_1996], *Carex loliaceae*: Ho = 0.00 to 0.12
 [@KullOja_2010].
 
 The main geographic structure in the genetic data reveals a broad division
-between Missouri and the eastern populations (Figure \@ref(fig:distmap)).
+between Missouri and the eastern populations (Figure \@ref(fig:PCoA)).
 This suggests current *T. planifolium* populations may have emerged from
 glacial refugia both in the Appalachian Mountains and on the Ozark plateau
 [@DelcourtDelcourt_1991; @Meyer_1997; @SoltisEtAl_2006]. However, if this
 is the case, it is interesting to note that populations representing both
 eastern and western genetic groups appear in close proximity in Ohio. The
-sPCA analysis also indicates the Ontario population is genetically more
-similar to the Missouri populations than the geographically closer eastern
-group.
+ordination analysis also indicates the Ontario population is genetically
+more similar to the Missouri populations than the geographically closer
+eastern group.
 
 Gene flow via pollen or seed between Missouri in the west, and Ohio and
 Ontario to the east, is unlikely, given the long distances between these
 locations (> 500 km). However, the SDM indicates pockets of suitable
 environment exist along the Ohio river in southern Indiana and northern
 Kentucky (Figure \@ref(fig:distmap)). This may have served as a
-post-glacial colonization route linking populations from the two refugia;
+post-glacial colonization route linking populations from the two regions;
 there may even be overlooked populations of *T. planifolium* in this area,
 as this species is easily missed.
 
-While our data do not show a general relationship between spatial or
-environmental conditions and genetic diversity, the lone remaining Canadian
-population is among the least diverse (eMLG; Figure \@ref(fig:sumplots)).
-We have argued above that population dynamics in this species are
-characterized by bottlenecks followed by inbreeding. This is often
-associated with a reduction in fitness [@AngeloniEtAl_2011]. However, this
-cost may be reduced in self-pollinating species [@Busch_2005;
+The lone remaining Canadian population shows somewhat reduced diversity
+(20th percentile for eMLG; Figure \@ref(fig:sumplots)). We have argued
+above that population dynamics in this species are characterized by
+bottlenecks followed by inbreeding. This is often associated with a
+reduction in fitness [@AngeloniEtAl_2011]. However, this cost may be
+reduced in self-pollinating species [@Busch_2005;
 @HoltsfordEllstrand_1990], and can be further mitigated if the inbreeding
 leads to purging of deleterious alleles [@CrnokrakBarrett_2002].
 
@@ -732,31 +854,27 @@ can say that *T. planifolium* populations with low diversity are relatively
 common and widespread (e.g., CT, MA, OH, VA), and several of
 them are quite large and apparently stable (personal observation).
 Furthermore, this pattern of limited intra-population genetic diversity is
-common in other woodland sedges. From this, we conclude that inbreeding
-depression is not likely to represent a conservation concern in this case.
+common in other woodland sedges. From this, we conclude that the reduced
+genetic diversity of the last Canadian population does not suggest inbreeding
+depression likely to be a threat to its persistence.
 
-The Canadian population is also one of the most divergent (F~D~; Figure
-\@ref(fig:sumplots)). This provides indirect evidence that this population
-is adapted to site-specific environmental conditions, and indicates that it
-is of high conservation value [as per @LesicaAllendorf_1995]. Indeed,
-protection of many populations of *T. planifolium* would be necessary to
-conserve species-level genetic diversity as it is chiefly partitioned
-among, rather than within, populations [see @BaskaufEtAl_2014 or
-@KoellingEtAl_2011, for example]. These results also suggest that risks of
-outbreeding depression are high with outcrossing, and future restorative
-efforts (i.e., augmentation) for the Canadian population should be avoided
-or approached with caution [@FrankhamEtAl_2011]. It should also be
-considered that mixing of populations with differing genetic backgrounds
-could decrease the conservation value of the Canadian population
-[@BarrettKohn_1991].
-
-# CONCLUSION
-In *T. planifolium*, population genetic diversity is primarily a reflection
-of local processes. Its reproductive biology favours inbreeding; genetic
-diversity is paritioned almost entirely among populations, with very little
-within populations. This highlights the importance of considering the
-influence of life history in shaping broader biogeographic patterns as the
-study of range limits advances.
+The Canadian population is moderately divergent genetically (80th
+percentile for F~D~; Figure \@ref(fig:sumplots)), and climatic conditions
+at that location are not extreme for the species (30th percentile for
+suitability). However, it is extremely isolated, and the soil conditions at
+the site are shared with only one other population. This provides indirect
+evidence that this population may be adapted to site-specific environmental
+conditions, indicating elevated conservation value [as per
+@LesicaAllendorf_1995]. Indeed, protection of many populations of *T.
+planifolium* would be necessary to conserve species-level genetic diversity
+as it is chiefly partitioned among, rather than within, populations [see
+@BaskaufEtAl_2014 or @KoellingEtAl_2011, for example]. These results also
+suggest that risks of outbreeding depression are high with outcrossing, and
+future restorative efforts (i.e., augmentation) for the Canadian population
+should be avoided or approached with caution [@FrankhamEtAl_2011]. It
+should also be considered that mixing of populations with differing genetic
+backgrounds could decrease the conservation value of the Canadian
+population [@BarrettKohn_1991].
 
 # Acknowledgements
 The authors thank the staff of Royal Botanical Gardens in Hamilton,

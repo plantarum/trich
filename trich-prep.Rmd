@@ -44,6 +44,12 @@ library(dplyr)
 library(ENMTools)
 library(pegas) #hw.test
 library(scales)
+library(viridis)
+library(ggplot2)
+library(tidyr)
+library(adehabitatHR)
+library(dendextend)
+library(maptree)
 ```
 # Analysis
 ## Population Data
@@ -70,7 +76,7 @@ colnames(geogD) <- samples$population
 
 ## Distribution Data
 ### Records
-```{R gbif, cache = TRUE}
+```{R gbif}
 gbif <- read.table("data/trich-gbif.csv")
 coordinates(gbif) <- ~X+Y
 
@@ -100,7 +106,7 @@ crs(gbifthin) <- CRS("+proj=longlat +datum=WGS84")
 ```
 
 ### Isolation Index
-```{R isolation}
+```{R isolation-prep}
 isolation <- function(x, nb = 5){
   tmp  <- pointDistance(x, lonlat = TRUE)
   tmp <- as.matrix(as.dist(tmp))
@@ -110,8 +116,12 @@ isolation <- function(x, nb = 5){
 }
 
 gbifthin$isolation <- isolation(gbifthin, nb = 5)
-
-samples$isolation  <- gbifthin@data[row.names(samples), "isolation"]
+tmpKernel <- kernelUD(gbifthin, h = "LSCV", grid = 1000)
+kernelRaster <- raster(tmpKernel)
+gbifthin$kernel <- raster::extract(kernelRaster, gbifthin) 
+samples$kernel <- raster::extract(kernelRaster, samples)
+samples$isolation  <- gbifthin@data[row.names(samples),
+                                   "isolation"]
 ```
 
 ### Marginality Index
@@ -125,7 +135,48 @@ samples$marginality <-
               colMeans(coordinates(gbifthin)),
               var(coordinates(gbifthin)))
 ```
+### Soils
+
+```{R soils}
+soilCols <- c("Ca", "CEC", "OM", "P", "Mg", "K", "Mn", 
+             "Zn", "pH")
+soilData <- data.frame(samples)[, soilCols]
+soilData <- soilData[complete.cases(soilData), ]
+soilPCA <- prcomp(soilData, scale. = TRUE, center = TRUE) 
+soilInd <- mahalanobis(predict(soilPCA),
+                      colMeans(predict(soilPCA)),
+                      var(predict(soilPCA)))
+soilDist <- dist(scale(soilData))
+soilClust <- hclust(soilDist, method = "average")
+soilCophenetic <- cor(cophenetic(soilClust), soilDist)
+soilKGS <- kgs(soilClust, soilDist) 
+soilCut <- cutree(soilClust,
+                 k =
+                   as.numeric(names(soilKGS)[which.min(soilKGS)]))
+soilData$group <- soilCut
+
+```
+
 ## SSR
+trComp 
+
+: genind object with all individuals with complete genotypes (i.e., no
+  missing markers)
+
+trichGI4
+
+: genind object with all individuals with 8-11 markers scored (i.e., less
+  than 4 missing markers)
+
+trichGI
+
+: genind object with all individuals scored
+
+tr97
+
+: genind object with one sample per unique MLG
+
+
 ### Loading Data
 ```{R ssr loading, echo=FALSE}
   ssr <- read.table("./data/ssr_raw.csv", header = TRUE, sep = "\t",
@@ -190,9 +241,135 @@ samples$marginality <-
   lociInd <- apply(lociTab, 2, function(x) sum(is.na(x)))
 ```
 
+### Exporting to Structure
+```{R exportStructure, eval = FALSE}
+trichGI4df <- genind2df(trichGI4)
+trichGI4df[is.na(trichGI4df)] <- -999
+trichGI4hf <- genind2hierfstat(trichGI4)
+write.struct(trichGI4hf, fname = "trichGI4.structure",
+             ilab = row.names(trichGI4hf), pop = TRUE,
+             MARKERNAMES = TRUE)
+```
+
+### Exporting to GESTE
+
+```{R geste-export, eval = FALSE}
+geste <- seppop(trichGI4)
+geste <- lapply(geste, seploc)
+
+geste.input <- file("geste.alleles", "w")
+
+cat("[loci]=", length(geste[[1]]), "\n\n", file = geste.input)
+
+cat("[populations]=", length(geste), "\n\n", file = geste.input)
+
+for(popI in seq_along(geste)) {
+  cat("[pop]=", popI, "\n", file = geste.input)
+  for(locI in seq_along(geste[[popI]])){
+    popLocus <- colSums(tab(geste[[popI]][[locI]]), na.rm = TRUE)
+    popLocus <- c(locI, sum(popLocus, na.rm = TRUE), length(popLocus),
+                 popLocus)
+    cat(popLocus, "\n", file = geste.input)
+  }
+  cat("\n", file = geste.input)
+}
+  
+close(geste.input)
+
+write.table(file = "factors.txt",
+            t(data.frame(samples[, c("marginality", "isolation")])),
+            col.names = FALSE)
+
+```
+
+
+### Structure Analysis
+
+``` bash
+InStruct -d trichGI4.structure -o instruct.out -ik 1 -kv 1 30 \
+         -v 2 -N 505 -L 11 -lb 1 -a 1 -w 1 -x 0 -af 0 -mm 8.0e9 
+```
+
+reviewing the Deviance values:
+``` bash
+grep -a Deviance instruct.out
+```
+
+Grabbing the best:
+``` bash
+awk '/K is 16/,/K is 17/' instruct.out > k16.out
+awk '/Chain#1/,/Chain#2/' k16.out > k16-1.out
+awk '/^Indv\tLabel/,/^$/' k16-1.out > k16.q
+```
+
+```{R loadInstruct, eval = FALSE}
+instruct <- read.table("data/k16.q", header = TRUE, sep = "\t")
+instruct <- read.table("data/k10.q", header = TRUE, sep = "\t")
+colnames(instruct) <- gsub("\\.+$", "", colnames(instruct))
+colnames(instruct) <- gsub("^X\\.", "", colnames(instruct))
+rownames(instruct) <- NULL
+instruct$Miss <- gsub("[()]", "", instruct$Miss)
+instruct$Pop <- substr(instruct$Label, 0, 4)
+instruct$Pop[grep("KY", instruct$Pop)] <- "KYLE"
+instruct <- instruct[order(instruct$Label), ]
+
+insertPopBefore <- function(x, pop, before){
+  whichPop <- which(x$Pop == pop)
+  popRows <- x[whichPop, ]
+  res <- x[-whichPop, ]
+  insertBefore <- min(which(res$Pop == before))
+  resBefore <- res[1:(insertBefore -1), ]
+  resAfter <- res[insertBefore:nrow(res), ]
+  res <- rbind(resBefore, popRows, resAfter)
+  return(res)
+}
+
+## K= 16 reordering:
+instruct <- insertPopBefore(instruct, "CTTP", "NYMP")
+instruct <- insertPopBefore(instruct, "MOBS", "MOOC")
+instruct <- insertPopBefore(instruct, "MDDM", "NJKP")
+instruct <- insertPopBefore(instruct, "MABM", "MAST")
+instruct <- insertPopBefore(instruct, "OHHH", "OHSC")
+instruct <- insertPopBefore(instruct, "WVFM", "OHBH")
+instruct <- insertPopBefore(instruct, "MAMT", "ONRB")
+instruct <- insertPopBefore(instruct, "PACR", "PASG")
+instruct <- insertPopBefore(instruct, "WVMO", "WVFM")
+instruct <- insertPopBefore(instruct, "VAHB", "PAGP")
+instruct <- insertPopBefore(instruct, "KYLE", "OHHH")
+instruct <- insertPopBefore(instruct, "ONRB", "MDDM")
+
+## K = 10 reordering
+instruct <- insertPopBefore(instruct, "MAMT", "KYLE")
+instruct <- insertPopBefore(instruct, "NYMP", "KYLE")
+instruct <- insertPopBefore(instruct, "WVSS", "KYLE")
+instruct <- insertPopBefore(instruct, "VAAC", "MDDM")
+instruct <- insertPopBefore(instruct, "MOOC", "MOBU")
+instruct <- insertPopBefore(instruct, "MOSH", "MOBU")
+instruct <- insertPopBefore(instruct, "OHSC", "NHER")
+barplot(as.matrix(t(instruct[, -1:-4])), border = "NA",
+        col = rainbow(10), legend.text = 1:10, space = 0,
+        names.arg = rep("", nrow(instruct)),
+        #density = c(60, NA), angle = c(45, 45, -45, -45)
+        )
+xlabels <- aggregate(1:nrow(instruct), by = list(instruct$Pop), FUN = mean)
+axis(1, at = xlabels$x - 0.5, labels = xlabels$Group.1,
+     cex.axis = 0.5)
+sampleEdges <- aggregate(1:nrow(instruct), by = list(instruct$Pop), FUN = max)
+abline(v = sampleEdges$x, lwd = 2)
+
+
+structPlot <- 
+instruct %>% group_by(Pop) %>%
+pivot_longer(names_to = "cluster", values_to = "proportion",
+             cols = Cluster.1:Cluster.10) %>%
+ggplot() + geom_col(aes(x = Label, y = proportion,
+                        col = cluster, fill = cluster), width = 1) + facet_wrap(~Pop)
+
+```
+
 ### Summaries
 #### Samples, alleles, pairwise Fst
-```{R ssr summaries, cache = TRUE}
+```{R ssr summaries}
 NComp <- as.data.frame(table(pop(trComp)))
 samples[ as.character(NComp$Var1), "NComp"]  <- NComp$Freq
 total$NComp <- sum(samples$NComp)
@@ -217,7 +394,9 @@ samples[colnames(t(Ap)), "Ap"]  <- Ap
 ## Allelic richness, PopGenReport
 Ar <- allel.rich(trichGI4)$mean
 samples[colnames(t(Ar)), "Ar"]  <- Ar 
+
 ```
+
 #### MLG
 `poppr` assigns ambgiuous mlg (due to missing loci) based on sort order,
 which is arbitrary. The code below will correct this assignment, in the
@@ -290,7 +469,7 @@ total$emlg <- rarefy(colSums(mlg.tab), sample = 10)
 
 #### Hierfstat: Ho, Hs, Fis, Fst
 
-```{R popgen, cache = TRUE}
+```{R popgen}
 ## hierfstat He, Ho: note that basic.stats automatically converts
 ## genind objects to hierfstat objects.
 
@@ -316,18 +495,37 @@ total$meanFst <- bs$overall["Fst"]
 #### Hardy-Weinburg Equilibrium
 ```{R HWE}
 trichGI4.hwt <- hw.test(trichGI4)
-trichGI4.hwt
+# trichGI4.hwt
 ```
+
 ## Mapping
-```{R mapping data, cache = TRUE}
+Set up the North America map and save it for later (it takes a while to compute):
+```{R prep-na-map, eval = FALSE}
 us <- getData("GADM", country = "USA", level = 1, path = "./data/maps/")
 canada <- getData("GADM", country = "CAN", level = 1, path = "./data/maps")
-greatlakes <- shapefile("data/maps/greatlakes.shp")
-extent <- shapefile("data/maps/study_extent.shp")
 
 canlam <- CRS("+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs")
 ca.proj <- spTransform(canada, canlam)
 us.proj <- spTransform(us, canlam)
+na.proj <- bind(ca.proj, us.proj)
+
+## convert to sf so we can use graticules:
+na.proj <- st_as_sf(na.proj)
+na.simp <- st_crop(na.proj, xmin = -40000, xmax = 2220000,
+                  ymin = -3002435, ymax = 600000)
+na.simp <- st_simplify(na.simp, dTolerance = 0.01)
+save(na.simp, file = "data/na_simp.Rda")
+```
+
+```{R mapping data}
+us <- getData("GADM", country = "USA", level = 1, path = "./data/maps/")
+load("data/na_simp.Rda")
+
+canlam <- CRS("+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs")
+
+greatlakes <- shapefile("data/maps/greatlakes.shp")
+extent <- shapefile("data/maps/study_extent.shp")
+
 gl.proj <- spTransform(greatlakes, canlam)
 extent.proj <- spTransform(extent, canlam)
 zm <- new("Extent", xmin = 40000,
@@ -348,8 +546,10 @@ background <- read.table("data/background_points.csv")
 coordinates(background) <- ~X+Y
 load("./data/eval.opt.2020-06-24.Rda")
 
-gbifthin$suitability <- extract(eval.opt@predictions, gbifthin)
-samples$suitability <- extract(eval.opt@predictions, samples)
+gbifthin$suitability <-
+  raster::extract(eval.opt@predictions, gbifthin)
+samples$suitability <-
+  raster::extract(eval.opt@predictions, samples)
 
 rasterProj <- projectExtent(eval.opt@predictions, canlam)
 res(rasterProj) <- 10000
@@ -358,6 +558,9 @@ predTR[predTR < quantile(getValues(predTR),
                          probs = 0.85, na.rm = TRUE)] <- NA
 
 samples.proj <- spTransform(samples, canlam)
+kernelProj <- projectRaster(kernelRaster, rasterProj)
+kernelProj[kernelProj < 0.007] <- NA
+
 ```
 ## sPCA
 
@@ -405,10 +608,157 @@ points(samples.proj, cex = 3, pch = 22, bg = grey(tab(trichGP4, freq = TRUE)[, c
 box()
 ```
 
+## dapc
+
+```{R dapc, eval = FALSE}
+
+dapc97G <- find.clusters(tr97, max.n.clust = 40)
+## 15 PCA, 10 clusters
+
+table(pop(tr97), dapcGroups$grp)
+table.value(table(pop(tr97), dapcGroups$grp))
+
+dapc97 <- dapc(tr97, dapc97G$grp)
+## 10 PCA, 3 DCA
+
+dapc97G <- find.clusters(tr97, max.n.clust = 40)
+## 15 PCA, 10 clusters
+
+table(pop(tr97), dapcGroups$grp)
+table.value(table(pop(tr97), dapcGroups$grp))
+
+dapc97 <- dapc(tr97, dapc97G$grp)
+## 10 PCA, 3 DCA
+
+dapcComp <- find.clusters(trComp, max.n.clust = 40)
+## 10 PCA, 30 clusters
+
+tr2grps <- find.clusters(trichGI4, max.n.clust = 40, 
+                         n.clust = 2, n.pca = 35)
+
+tr5grps <- find.clusters(trichGI4, max.n.clust = 40, 
+                         n.clust = 5, n.pca = 35)
+
+tr10grps <- find.clusters(trichGI4, max.n.clust = 40,
+                          n.clust = 10, n.pca = 35)
+
+tr15grps <- find.clusters(trichGI4, max.n.clust = 40,
+                          n.clust = 15, n.pca = 35)
+
+tr2DAPC <- dapc(trichGI4, tr2grps$grp, n.pca = 35, n.da = 4)
+tr5DAPC <- dapc(trichGI4, tr5grps$grp, n.pca = 35, n.da = 4)
+tr10DAPC <- dapc(trichGI4, tr10grps$grp, n.pca = 35, n.da = 4)
+tr15DAPC <- dapc(trichGI4, tr15grps$grp, n.pca = 35, n.da = 4)
+
+assignPops <- function(DAPC){
+  posterior <- predict(DAPC)$posterior
+  posterior <- posterior[order(row.names(posterior)), ]
+  pops <- substr(row.names(posterior), 0, 4)
+  pops[grep("KY", row.names(posterior))] <- "KYLE"
+  posterior <- cbind(population = pops, posterior)
+
+  xlabels <- aggregate(1:nrow(posterior),
+                       by = list(posterior[, "population"]),
+                       FUN = mean)
+
+  sampleEdges <- aggregate(1:nrow(posterior),
+                           by = list(posterior[, "population"]), 
+                           FUN = max)
+
+  return(list(membership = posterior, populations = xlabels,
+              edges = sampleEdges))
+}
+
+plotAssign <- function(x){
+  barplot(t(as.matrix(x$membership[, -1])),
+          col = rainbow(ncol(x$membership) - 1 ), 
+          space = 0, xlab="Population", ylab = "Ancestry", 
+          border = NA, axisnames = FALSE)
+  abline(v = x$edges$x, lwd = 2)
+  axis(1, at = x$populations$x - 0.5,
+       labels = x$populations$Group.1, cex.axis = 0.5)
+}
+
+tr2assign <- assignPops(tr2DAPC)
+plotAssign(tr2assign)
+
+tr5assign <- assignPops(tr5DAPC)
+plotAssign(tr5assign)
+
+tr10assign <- assignPops(tr10DAPC) 
+plotAssign(tr10assign)
+
+quickDAPC <- function(x, n){
+  grps <- find.clusters(x, max.n.clust = 40, 
+                        n.clust = n, n.pca = 35)
+  dapc <- dapc(x, grps$grp, n.pca = 35, n.da = 4)
+  assign <- assignPops(dapc)
+  plotAssign(assign)
+}
+
+quickDAPC(trichGI4, 7)
+
+tr2grps <- find.clusters(trichGI4, max.n.clust = 40, 
+                         n.clust = 2, n.pca = 35)
+tr2DAPC <- dapc(trichGI4, tr2grps$grp, n.pca = 35, n.da = 4)
+tr10assign <- assignPops(tr10DAPC) 
+plotAssign(tr10assign)
+
+```
+
+## Ordinations
+```{R clone distances}
+cloneDist <- dist(tab(tr97, freq = TRUE))
+clonePCoA <- cmdscale(cloneDist,  eig = TRUE, k = 96)
+eigVals <- round(100 * clonePCoA$eig/sum(clonePCoA$eig), 1)
+
+myPops <- as.character(pop(tr97))
+myPops[grep("^MO", myPops)] <- "MO"
+myPops[grep("^MD", myPops)] <- "MD"
+myPops[grep("^ON", myPops)] <- "ON"
+myPops[grep("^KY", myPops)] <- "X"
+myPops[grep("^OH", myPops)] <- "X"
+myPops[grep("^NY", myPops)] <- "X"
+myPops[grep("^NH", myPops)] <- "X"
+myPops[grep("^MA", myPops)] <- "X"
+myPops[grep("^CT", myPops)] <- "X"
+myPops[grep("^NJ", myPops)] <- "X"
+myPops[grep("^VA", myPops)] <- "X"
+myPops[grep("^WV", myPops)] <- "X"
+myPops[grep("^PA", myPops)] <- "X"
+myPops <- as.factor(myPops)
+
+myStates <- substr(as.character(pop(tr97)), 0, 2)
+##myStates[myStates %in% c("MO", "MD", "ON")] <- NA
+```
+
+## Bruvo.dist
+
+```{R bruvo}
+SSRLengths = c(TP142 = 3, TP152 = 2, TP174 = 3, TP325 = 3,
+               TP326 = 2, TP330 = 3, TP341 = 3, TP406 = 3,
+               TP434 = 3, TP45 = 3, TP80B = 3) 
+bdist <- bruvo.dist(trichGI4, SSRLengths)
+bdPCoA <- cmdscale(bdist, k = 504, eig = TRUE)
+bStates <- substr(pop(trichGI4), 0, 2)
+
+plot(scores(bdPCoA)[, c(1,2)], type = 'n',
+     asp = 1, axes = FALSE, xlab = NA, ylab = NA)
+statesbrSpider <- unique(unclass(ordispider(bdPCoA, groups = bStates,
+                                         col = "grey")))
+points(scores(bdPCoA)[, c(1,2)], asp = 1, pch = 16)
+text(statesbrSpider, cex = 1,
+     labels = substr(row.names(statesbrSpider), 0, 2))
+
+
+
+
+```
+
 # Figures
 ## Regressions
 
-```{R index plots, fig.width=7.25, fig.height = 3.5}
+```{R index plots, fig.width=7.25, fig.height = 3.5, eval = FALSE}
 #dev.new(width = 7.25, height = 3.5)
 par(mfrow = c(1, 3), mar = c(5, 4, 2, 1))
 lmdf <- 
@@ -490,8 +840,8 @@ gbifthin@data %>% ggplot() +
 
 # Revision Figures
 
-```{R mlg-figs} 
-dev.new(height = 9, width = 7.25)
+```{R mlg-figs, eval = FALSE} 
+##dev.new(height = 9, width = 7.25)
 
 tyScaler <- function(x){
   x <- x - min(x)
@@ -576,3 +926,5 @@ box()
 
 
 ```
+
+
