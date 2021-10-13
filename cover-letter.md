@@ -1,10 +1,20 @@
 To Whom it May Concern,
 
-Please find attached our manuscript for consideration for publication in The American Journal of Botany.
+Please find attached our manuscript for consideration for publication in
+journal Botany.
 
-We evaluated the relationship between genetic diversity and geographic range limits, spatial isoloation, and environmental peripherality. Our major contributions are: applying straightforward measures that distinguish between these related aspects of distribution, allowing for a more precise articulation of the biogeographic question; and providing an illustrative case study, where local processes associated with the life history of our study species dominate the genetic structure of its populations, leaving no evidence of broad scale biogeographic patterns.
+This is a conservation assessment of a peripheral population Trichophorum
+planifolium. We applied SSR markers to assess its genetic divergence, and
+collected distribution, climate, and soil data to assess its spatial and
+environmental characteristics relative to the core range of the species. We
+intepret conservation implications of the results, in the context of
+similar patterns documented in other sedge species with similar life
+history characteristics.
 
-This paper provides novel insights into the study of range limits, an area that has received renewed interest in the botanical community, including a review in AJB. It also addresses conservation of peripheral populations, which is an important management issue in high-latitude countries around the world.
+The raw data for this study is currently available in the following github
+repository: https://github.com/plantarum/trich . On acceptance, we will
+transfer this to a suitable repository for archival storage (i.e.,
+FigShare, Zenodo or similar).
 
 Best,
 
