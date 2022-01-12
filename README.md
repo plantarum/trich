@@ -1,4 +1,4 @@
-Start with trich.Rmd to see read our draft manuscript. See trich-prep.Rmd for the bulk of the code used in generating this manuscript.
+Start with trich.Rmd to read our draft manuscript. See trich-prep.Rmd for the bulk of the code used in generating this manuscript.
 
 # File List:
 

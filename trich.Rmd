@@ -9,10 +9,21 @@ output:
     number_sections: false
 bibliography: plantarum.json
 csl: american-journal-of-botany.csl
-updated: 2021-10-13
+updated: 2022-01-12
 author: "Victoria J. Nowell, Song Wang, and Tyler W. Smith"
 date: 2021-02-11
 ---
+
+
+# Note
+
+This is the source file for our manuscript. It contains all of the writing
+and analysis contained in our publication. However, final formatting,
+including revisions from co-authors and peer reviewers, were done in a
+separate Word MS word document. It's just too big a hassle to copy those
+changes back to this document. Consequently, there will be some differences
+between this file and the published document. In case of disagreement, the
+published manuscript is the canonical report we stand behind.
 
 # Abstract
 Peripheral populations are understood to hold special conservation
@@ -909,5 +920,37 @@ This manuscript and all associated data is available at the GitHub
 repository, https://github.com/plantarum/trich for inspection during peer
 review. This repository will be transfered to Zenodo for permanent, public
 archiving after completion of the peer review process.
+
+
+# Extra Figures
+
+```{R popsize, fig.width = 6, fig.height = 3, dev = 'jpeg', dpi = 200, echo = FALSE, fig.show = "hold", fig.cap = "Genetic diversity (eMLG) and divergence by population size. Very small: < 100 individuals; Small: 100-500; Medium: 500-1000; Large: 1000+."}
+#dev.new(height = 3, width = 7)
+jpeg(filename = "popsize.jpg", width = 1200, height = 600,
+     res = 200)
+par(mfrow = c(1, 2))
+par(mar = c(2, 3.5, 0.5, 0.5))
+boxplot(samples$meanFst ~ samples$size, axes = FALSE,
+        xlab = "", ylab = "", main = "")
+axis(side = 2, cex.axis = 0.7, tcl = -0.33, padj = 0.75)
+mtext(side = 2, line = 2, expression("F"[D]))
+axis(side = 1, cex.axis = 0.7, tcl = -0.33, padj = -0.75,
+     labels = c("V Small", "Small", "Medium", "Large"),
+     at = 1:4)
+box()
+
+par(mar = c(2, 3.5, 0.5, 0.5))
+boxplot(samples$emlg ~ samples$size, axes = FALSE,
+        xlab = "", ylab = "", main = "")
+axis(side = 2, cex.axis = 0.7, tcl = -0.33, padj = 0.75)
+mtext(side = 2, line = 2, "eMLG")
+axis(side = 1, cex.axis = 0.7, tcl = -0.33, padj = -0.75,
+     labels = c("V Small", "Small", "Medium", "Large"),
+     at = 1:4)
+box()
+
+dev.off()
+
+```
 
 # References

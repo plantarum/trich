@@ -55,7 +55,9 @@ library(maptree)
 ## Population Data
 ```{R loading samples}
 samples <- read.csv("data/survey-pops.csv")
-levels(samples$size)  <- c("Very small",  "Small", "Medium",  "Large")
+samples$size <- factor(samples$size,
+                       levels = c("Very small", "Small",
+                                  "Medium", "Large"))  
 row.names(samples) <- samples$population
 
 soil <- read.table("data/trich_soil.csv", header = TRUE,
@@ -106,6 +108,9 @@ crs(gbifthin) <- CRS("+proj=longlat +datum=WGS84")
 ```
 
 ### Isolation Index
+NB: isolation is my ad hoc isolation measure, kernel is the one we used in
+the paper, based on the Utilization Distribution measure.
+
 ```{R isolation-prep}
 isolation <- function(x, nb = 5){
   tmp  <- pointDistance(x, lonlat = TRUE)
@@ -710,6 +715,9 @@ plotAssign(tr10assign)
 ```{R clone distances}
 cloneDist <- dist(tab(tr97, freq = TRUE))
 clonePCoA <- cmdscale(cloneDist,  eig = TRUE, k = 96)
+## Numerically identical to a PCA on the same data:
+## clonePCA <- dudi.pca(tab(tr97, freq = TRUE), nf = 63,
+##                      scannf = FALSE, scale = FALSE)
 eigVals <- round(100 * clonePCoA$eig/sum(clonePCoA$eig), 1)
 
 myPops <- as.character(pop(tr97))
@@ -739,8 +747,46 @@ SSRLengths = c(TP142 = 3, TP152 = 2, TP174 = 3, TP325 = 3,
                TP326 = 2, TP330 = 3, TP341 = 3, TP406 = 3,
                TP434 = 3, TP45 = 3, TP80B = 3) 
 bdist <- bruvo.dist(trichGI4, SSRLengths)
+b97dist <- bruvo.dist(tr97, SSRLengths)
+
+bclust <- hclust(b97dist, method = "average")
+plot(bclust, labels = pop(tr97))
+
+fixPops <- factor(pop(tr97),
+                        levels =
+                          c("MOBS", "MOBU", "MOHC", "MOOC", "MOSH",
+                            "OHBH", "OHHH", "OHPR", "OHSC", "KY",
+                            "CTTP", "MABM", "MAMT", "MAST", "NHER",
+                            "NJKP", "NYMP", "NYTS", "ONRB",
+                            "PABE", "PACR", "PAGP", "PASG",
+                            "VAAC", "VAHB", "VASC", "WVFM",
+                            "WVMO", "WVSS", "MDDM"))
+
+tr97@pop <- fixPops
+
+tr97.msn <- bruvo.msn(tr97, SSRLengths,
+                      vertex.label = NA,
+                      palette = rainbow)
+
+
 bdPCoA <- cmdscale(bdist, k = 504, eig = TRUE)
 bStates <- substr(pop(trichGI4), 0, 2)
+
+bdPops <- as.character(pop(trichGI4))
+bdPops[grep("^MO", bdPops)] <- "MO"
+bdPops[grep("^MD", bdPops)] <- "MD"
+bdPops[grep("^ON", bdPops)] <- "ON"
+bdPops[grep("^KY", bdPops)] <- "X"
+bdPops[grep("^OH", bdPops)] <- "X"
+bdPops[grep("^NY", bdPops)] <- "X"
+bdPops[grep("^NH", bdPops)] <- "X"
+bdPops[grep("^MA", bdPops)] <- "X"
+bdPops[grep("^CT", bdPops)] <- "X"
+bdPops[grep("^NJ", bdPops)] <- "X"
+bdPops[grep("^VA", bdPops)] <- "X"
+bdPops[grep("^WV", bdPops)] <- "X"
+bdPops[grep("^PA", bdPops)] <- "X"
+bdPops <- as.factor(bdPops)
 
 plot(scores(bdPCoA)[, c(1,2)], type = 'n',
      asp = 1, axes = FALSE, xlab = NA, ylab = NA)
@@ -750,8 +796,55 @@ points(scores(bdPCoA)[, c(1,2)], asp = 1, pch = 16)
 text(statesbrSpider, cex = 1,
      labels = substr(row.names(statesbrSpider), 0, 2))
 
+points(scores(bdPCoA)[, c(1,2)], pch = c(21:24)[bdPops],
+     asp = 1, bg = c(2:4, "grey")[bdPops],
+     col = c(1, 1, 1, 0)[bdPops],
+     cex = c(1.5, 1.5, 1.5, 1)[bdPops])
+```
+
+## Allele sizes
+```{R allele-sizes}
+fixPops <- factor(pop(trichGI4),
+                        levels =
+                          c("MOBS", "MOBU", "MOHC", "MOOC", "MOSH",
+                            "OHBH", "OHHH", "OHPR", "OHSC", "KY",
+                            "CTTP", "MABM", "MAMT", "MAST", "NHER",
+                            "NJKP", "NYMP", "NYTS", "ONRB",
+                            "PABE", "PACR", "PAGP", "PASG",
+                            "VAAC", "VAHB", "VASC", "WVFM",
+                            "WVMO", "WVSS", "MDDM"))
+
+trichGI4@pop <- fixPops
+
+MyColorFun <- function(n){
+  case_when(
+    n < 6 ~ 'red',
+    n < 11 ~ 'orange',
+    n < 16 ~ 'yellow',
+    n < 21 ~ 'green',
+    n < 26 ~ 'blue',
+    n < 31 ~ 'violet',
+    n > 30 ~ 'black')
+}
+
+myCols <- rep(c("red", "orange", "yellow", "black", "green",
+                "blue", "violet"), times = c(5, 4, 1, 5, 5,
+                                             5, 5)) 
+
+trich.msn <- bruvo.msn(trichGI4, SSRLengths,
+                       palette = myCols,
+                       vertex.label = NA)
 
 
+tmp <- new("bruvomat", trichGI4, SSRLengths)
+tmpPops <- pop(trichGI4)
+
+locFac(trichGI4)
+trichGI4[, loci = "TP142"]
+locN
+lociNames <- levels(locFac(trichGI4))
+
+tab(trichGI4[, loc = lociNames[1]])
 
 ```
 
