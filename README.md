@@ -1,3 +1,8 @@
+
+
+[![DOI](https://zenodo.org/badge/275022225.svg)](https://zenodo.org/badge/latestdoi/275022225)
+
+
 Start with trich.Rmd to read our draft manuscript. See trich-prep.Rmd for the bulk of the code used in generating this manuscript.
 
 # File List:
