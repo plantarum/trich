@@ -14,24 +14,32 @@ Start with trich.Rmd to read our draft manuscript. See trich-prep.Rmd for the bu
   articles. I don't recall where this came from; only necessary to format
   references when compiling manuscript.
 
-- **data/ssr_raw.csv** : raw microsatellite data. See trich-prep.Rmd (Loading
-  Data) for code to load and translate this to a genind object
+- **data/**
+  - **data/ssr_raw.csv** : raw microsatellite data. See trich-prep.Rmd (Loading
+    Data) for code to load and translate this to a genind object
 
-- **data/survey-pops.csv** : coordinates of sampled populations
+  - **data/survey-pops.csv** : coordinates of sampled populations
 
-- **data/background_points.csv** : 10,000 random sampled from the study extent,
-  used in the Maxent modeling. You could easily recreate a comparable data
-  set within R, but I didn't know that when I generated this file in QGIS.
+  - **data/background_points.csv** : 10,000 random sampled from the study
+    extent, used in the Maxent modeling. You could easily recreate a
+    comparable data set within R, but I didn't know that when I generated
+    this file in QGIS.
 
-- **data/eval.opt.2020-06-24.Rda** : the output of the Maxent modeling, saved
-  as a binary R Data object. Load into R with the load() function, so you
-  don't need to repeat the lengthy Maxent analysis.
+  - **data/eval.opt.2020-06-24.Rda** : the output of the Maxent modeling,
+    saved as a binary R Data object. Load into R with the load() function,
+    so you don't need to repeat the lengthy Maxent analysis.
 
-- **data/trich-gbif.csv** : GBIF records used in the Maxent analysis
+  - **data/trich-gbif.csv** : GBIF records used in the Maxent analysis
 
-- **data/trich_soil.csv** : Soil analysis for each sampled population
+  - **data/trich_soil.csv** : Soil analysis for each sampled population
 
-- **data/maps** : Maps (shapefiles and rasters) used in the Maxent analysis,
-  and for some of the manuscript plots
+  - **data/maps** : Maps (shapefiles and rasters) used in the Maxent
+    analysis, and for some of the manuscript plots
 
+# How to use this repository
 
+If you know how to compile an RMarkdown document, just do that with
+`trich.Rmd`. If you aren't familiar with RMarkdown, you can examine the R
+code in `trich.Rmd` and `trich-prep.Rmd` to see the code we used. If you
+don't know how to code in R none of this will be of much use or interest to
+you. You can find the raw data files in `data/`.

@@ -4,9 +4,6 @@ output:
   bookdown::pdf_document2:
     toc: false
     number_sections: false
-  bookdown::word_document2:
-    toc: false
-    number_sections: false
 bibliography: plantarum.json
 csl: american-journal-of-botany.csl
 updated: 2022-01-12
@@ -922,12 +919,14 @@ review. This repository will be transfered to Zenodo for permanent, public
 archiving after completion of the peer review process.
 
 
-# Extra Figures
+# Extra Figure
+
+Added during revision
 
 ```{R popsize, fig.width = 6, fig.height = 3, dev = 'jpeg', dpi = 200, echo = FALSE, fig.show = "hold", fig.cap = "Genetic diversity (eMLG) and divergence by population size. Very small: < 100 individuals; Small: 100-500; Medium: 500-1000; Large: 1000+."}
 #dev.new(height = 3, width = 7)
-jpeg(filename = "popsize.jpg", width = 1200, height = 600,
-     res = 200)
+## jpeg(filename = "popsize.jpg", width = 1200, height = 600,
+##      res = 200)
 par(mfrow = c(1, 2))
 par(mar = c(2, 3.5, 0.5, 0.5))
 boxplot(samples$meanFst ~ samples$size, axes = FALSE,
@@ -949,7 +948,7 @@ axis(side = 1, cex.axis = 0.7, tcl = -0.33, padj = -0.75,
      at = 1:4)
 box()
 
-dev.off()
+##dev.off()
 
 ```
 
